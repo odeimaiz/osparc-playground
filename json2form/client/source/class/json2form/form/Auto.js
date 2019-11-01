@@ -84,7 +84,12 @@ qx.Class.define("json2form.form.Auto", {
       init: {},
       event: "changeFormData",
       apply: "_applyFormData"
-    }
+    }/*,
+
+    propForm: {
+      check: "qx.ui.form.renderer.Single",
+      init: new qx.ui.form.renderer.Single()
+    }*/
   },
 
   members: {
@@ -94,6 +99,7 @@ qx.Class.define("json2form.form.Auto", {
 
     _applyJsonSchema: function(jsonSchema) {
       console.log(jsonSchema);
+      this.__addProperties(jsonSchema);
     },
 
     _applyUiSchema: function(uiSchema) {
@@ -102,6 +108,16 @@ qx.Class.define("json2form.form.Auto", {
 
     _applyFormData: function(formData) {
       console.log(formData);
+    },
+
+    __addProperties: function(props) {
+      for (let key in props) {
+        this.__addProperty(props[key], key);
+      }
+    },
+
+    __addProperty: function(prop) {
+      console.log(prop);
     },
 
     __setupDateField: function(s) {

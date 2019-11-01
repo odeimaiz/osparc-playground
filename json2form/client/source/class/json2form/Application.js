@@ -30,6 +30,8 @@ qx.Class.define("json2form.Application", {
     __uiSchema: null,
     __formData: null,
     __form: null,
+    __formTitle: null,
+    __formDescription: null,
 
     /**
      * This method contains the initial application code and gets called 
@@ -47,6 +49,8 @@ qx.Class.define("json2form.Application", {
 
       this.__buildLayout();
       this.__bindElements();
+
+      this.__populateWithfake();
     },
 
     __buildLayout: function() {
@@ -101,9 +105,23 @@ qx.Class.define("json2form.Application", {
     },
 
     __buildForm: function() {
+      const formLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
+
+      const formTitle = this.__formTitle = new qx.ui.basic.Label().set({
+        rich: true
+      });
+      formLayout.add(formTitle);
+
+      const formDesc = this.__formDescription = new qx.ui.basic.Label();
+      formLayout.add(formDesc);
+
       const form = this.__form = new json2form.form.Auto();
       const propsWidget = new json2form.form.renderer.PropForm(form);
-      return propsWidget;
+      formLayout.add(propsWidget, {
+        flex: 1
+      });
+
+      return formLayout;
     },
 
     __buildJsonLayout: function(labelText) {
@@ -143,7 +161,9 @@ qx.Class.define("json2form.Application", {
       this.__jsonSchema.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        this.__form.setJsonSchema(value);
+        this.__formTitle.setValue(value["title"]);
+        this.__formDescription.setValue(value["description"]);
+        this.__form.setJsonSchema(value["properties"]);
       });
       this.__uiSchema.addListener("changeValue", e => {
         const data = e.getData();
@@ -155,6 +175,92 @@ qx.Class.define("json2form.Application", {
         const value = JSON.parse(data);
         this.__form.setFormData(value);
       });
+    },
+
+    __populateWithfake: function() {
+      this.__jsonSchema.setValue(this.__fakeJsonSchema());
+      this.__uiSchema.setValue(this.__fakeUiSchema());
+      this.__formData.setValue(this.__fakeFormData());
+    },
+
+    __fakeJsonSchema: function() {
+      return JSON.stringify({
+        "title": "A registration form",
+        "description": "A simple form example.",
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "title": "First name",
+            "default": "Chuck"
+          },
+          "lastName": {
+            "type": "string",
+            "title": "Last name"
+          },
+          "age": {
+            "type": "integer",
+            "title": "Age"
+          },
+          "bio": {
+            "type": "string",
+            "title": "Bio"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "minLength": 3
+          },
+          "telephone": {
+            "type": "string",
+            "title": "Telephone",
+            "minLength": 10
+          }
+        }
+      }, null, 4);
+    },
+
+    __fakeUiSchema: function() {
+      return JSON.stringify({
+        "firstName": {
+          "ui:autofocus": true,
+          "ui:emptyValue": ""
+        },
+        "age": {
+          "ui:widget": "updown",
+          "ui:title": "Age of person",
+          "ui:description": "(earthian year)"
+        },
+        "bio": {
+          "ui:widget": "textarea"
+        },
+        "password": {
+          "ui:widget": "password",
+          "ui:help": "Hint: Make it strong!"
+        },
+        "date": {
+          "ui:widget": "alt-datetime"
+        },
+        "telephone": {
+          "ui:options": {
+            "inputType": "tel"
+          }
+        }
+      }, null, 4);
+    },
+
+    __fakeFormData: function() {
+      return JSON.stringify({
+        "firstName": "Chuck",
+        "lastName": "Norris",
+        "age": 75,
+        "bio": "Roundhouse kicking asses since 1940",
+        "password": "noneed"
+      }, null, 4);
     }
   }
 });
