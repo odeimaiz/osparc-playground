@@ -1,0 +1,34 @@
+{
+  "$schema": "https://raw.githubusercontent.com/qooxdoo/qooxdoo-compiler/master/source/resource/qx/tool/schema/compile-1-0-0.json",
+  "targets": [
+    {
+      "type": "source",
+      "outputPath": "compiled/source",
+      "bundle": {
+        "include": "qx.*"
+      }
+    },
+    {
+      "type": "build",
+      "outputPath": "compiled/build"
+    }
+  ],
+  "defaultTarget": "source",
+  "locales": ["en"],
+  "environment": {
+      "qx.icontheme": "Tango"
+  },
+  "applications": [
+    {
+      "class": "json2form.Application",
+      "theme": "json2form.theme.Theme",
+      "name": "json2form",
+      "bootPath": "source/boot",
+      "default": true,
+      "include": [
+        "iconfont.material.Load",
+        "iconfont.fontawesome5.Load"
+      ]
+    }
+  ]
+}
