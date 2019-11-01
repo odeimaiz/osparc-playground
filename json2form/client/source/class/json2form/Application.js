@@ -46,18 +46,19 @@ qx.Class.define("json2form.Application", {
       }
 
       this.__buildLayout();
+      this.__bindElements();
     },
 
     __buildLayout: function() {
       const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
 
       const jsonsPanel = this.__buildJsons();
-      const formPanel = this.__form = this.__buildForm();
+      const propsWidget = this.__buildForm();
 
       hBox.add(jsonsPanel, {
         width: "60%"
       });
-      hBox.add(formPanel, {
+      hBox.add(propsWidget, {
         width: "40%"
       });
 
@@ -100,7 +101,9 @@ qx.Class.define("json2form.Application", {
     },
 
     __buildForm: function() {
-      return new qx.ui.core.Widget();
+      const form = this.__form = new json2form.form.Auto();
+      const propsWidget = new json2form.form.renderer.PropForm(form);
+      return propsWidget;
     },
 
     __buildJsonLayout: function(labelText) {
@@ -117,6 +120,41 @@ qx.Class.define("json2form.Application", {
       });
 
       return vBox;
+    },
+
+    __bindElements: function() {
+      /*
+      this.__jsonSchema.bind("value", this.__form, "jsonSchema", {
+        converter: textValue => {
+          return JSON.parse(textValue);
+        }
+      });
+      this.__uiSchema.bind("value", this.__form, "uiSchema", {
+        converter: textValue => {
+          return JSON.parse(textValue);
+        }
+      });
+      this.__formData.bind("value", this.__form, "formData", {
+        converter: textValue => {
+          return JSON.parse(textValue);
+        }
+      });
+      */
+      this.__jsonSchema.addListener("changeValue", e => {
+        const data = e.getData();
+        const value = JSON.parse(data);
+        this.__form.setJsonSchema(value);
+      });
+      this.__uiSchema.addListener("changeValue", e => {
+        const data = e.getData();
+        const value = JSON.parse(data);
+        this.__form.setUiSchema(value);
+      });
+      this.__formData.addListener("changeValue", e => {
+        const data = e.getData();
+        const value = JSON.parse(data);
+        this.__form.setFormData(value);
+      });
     }
   }
 });
