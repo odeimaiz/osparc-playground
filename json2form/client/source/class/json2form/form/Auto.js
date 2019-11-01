@@ -98,7 +98,10 @@ qx.Class.define("json2form.form.Auto", {
     __formCtrl: null,
 
     _applyJsonSchema: function(jsonSchema) {
-      console.log(jsonSchema);
+      const items = this.getItems();
+      for (const itemKey in items) {
+        this.remove(items[itemKey]);
+      }
       this.__addProperties(jsonSchema);
     },
 
@@ -111,13 +114,105 @@ qx.Class.define("json2form.form.Auto", {
     },
 
     __addProperties: function(props) {
-      for (let key in props) {
+      for (const key in props) {
         this.__addProperty(props[key], key);
       }
     },
 
-    __addProperty: function(prop) {
-      console.log(prop);
+    __addProperty: function(s, key) {
+      if (s.default) {
+        if (!s.set) {
+          s.set = {};
+        }
+        s.set.value = s.default;
+      }
+
+      if (!s.widget) {
+        let type = s.type;
+        if (type.match(/^data:/)) {
+          type = "data";
+        }
+        s.widget = {
+          type: {
+            string: "Text",
+            integer: "Spinner",
+            number: "Number",
+            boolean: "CheckBox",
+            data: "FileButton"
+          }[type]
+        };
+      }
+      let control;
+      let setup;
+      switch (s.widget.type) {
+        case "Date":
+          control = new qx.ui.form.DateField();
+          setup = this.__setupDateField;
+          break;
+        case "Text":
+          control = new qx.ui.form.TextField();
+          setup = this.__setupTextField;
+          break;
+        case "Number":
+          control = new qx.ui.form.TextField();
+          setup = this.__setupNumberField;
+          break;
+        case "Spinner":
+          control = new qx.ui.form.Spinner();
+          control.set({
+            maximum: 10000,
+            minimum: -10000
+          });
+          setup = this.__setupSpinner;
+          break;
+        case "Password":
+          control = new qx.ui.form.PasswordField();
+          setup = this.__setupTextField;
+          break;
+        case "TextArea":
+          control = new qx.ui.form.TextArea();
+          setup = this.__setupTextArea;
+          break;
+        case "CheckBox":
+          control = new qx.ui.form.CheckBox();
+          setup = this.__setupBoolField;
+          break;
+        case "SelectBox":
+          control = new qx.ui.form.SelectBox();
+          setup = this.__setupSelectBox;
+          break;
+        case "ComboBox":
+          control = new qx.ui.form.ComboBox();
+          setup = this.__setupComboBox;
+          break;
+        case "FileButton":
+          control = new qx.ui.form.TextField();
+          setup = this.__setupFileButton;
+          break;
+        default:
+          throw new Error("unknown widget type " + s.widget.type);
+      }
+      this.__ctrlMap[key] = control;
+      let option = {}; // could use this to pass on info to the form renderer
+      this.add(control, s.title ? this["tr"](s.title):null, null, key, null, option);
+
+      setup.call(this, s, key, control);
+
+      if (s.set) {
+        if (s.set.filter) {
+          s.set.filter = RegExp(s.filter);
+        }
+        if (s.set.placeholder) {
+          s.set.placeholder = this["tr"](s.set.placeholder);
+        }
+        if (s.set.label) {
+          s.set.label = this["tr"](s.set.label);
+        }
+        control.set(s.set);
+      }
+      control.key = key;
+      control.description = s.description;
+      this.__ctrlMap[key] = control;
     },
 
     __setupDateField: function(s) {
@@ -304,107 +399,6 @@ qx.Class.define("json2form.form.Auto", {
           }
         }
       );
-    },
-
-    __addField: function(s, key) {
-      if (s.defaultValue) {
-        if (!s.set) {
-          s.set = {};
-        }
-        s.set.value = s.defaultValue;
-      }
-
-      if (!s.widget) {
-        let type = s.type;
-        if (type.match(/^data:/)) {
-          type = "data";
-        }
-        s.widget = {
-          type: {
-            string: "Text",
-            integer: "Spinner",
-            number: "Number",
-            boolean: "CheckBox",
-            data: "FileButton"
-          }[type]
-        };
-      }
-
-      if (!s.label) {
-        s.label = key;
-      }
-
-      let control;
-      let setup;
-      switch (s.widget.type) {
-        case "Date":
-          control = new qx.ui.form.DateField();
-          setup = this.__setupDateField;
-          break;
-        case "Text":
-          control = new qx.ui.form.TextField();
-          setup = this.__setupTextField;
-          break;
-        case "Number":
-          control = new qx.ui.form.TextField();
-          setup = this.__setupNumberField;
-          break;
-        case "Spinner":
-          control = new qx.ui.form.Spinner();
-          control.set({
-            maximum: 10000,
-            minimum: -10000
-          });
-          setup = this.__setupSpinner;
-          break;
-        case "Password":
-          control = new qx.ui.form.PasswordField();
-          setup = this.__setupTextField;
-          break;
-        case "TextArea":
-          control = new qx.ui.form.TextArea();
-          setup = this.__setupTextArea;
-          break;
-        case "CheckBox":
-          control = new qx.ui.form.CheckBox();
-          setup = this.__setupBoolField;
-          break;
-        case "SelectBox":
-          control = new qx.ui.form.SelectBox();
-          setup = this.__setupSelectBox;
-          break;
-        case "ComboBox":
-          control = new qx.ui.form.ComboBox();
-          setup = this.__setupComboBox;
-          break;
-        case "FileButton":
-          control = new qx.ui.form.TextField();
-          setup = this.__setupFileButton;
-          break;
-        default:
-          throw new Error("unknown widget type " + s.widget.type);
-      }
-      this.__ctrlMap[key] = control;
-      let option = {}; // could use this to pass on info to the form renderer
-      this.add(control, s.label ? this["tr"](s.label):null, null, key, null, option);
-
-      setup.call(this, s, key, control);
-
-      if (s.set) {
-        if (s.set.filter) {
-          s.set.filter = RegExp(s.filter);
-        }
-        if (s.set.placeholder) {
-          s.set.placeholder = this["tr"](s.set.placeholder);
-        }
-        if (s.set.label) {
-          s.set.label = this["tr"](s.set.label);
-        }
-        control.set(s.set);
-      }
-      control.key = key;
-      control.description = s.description;
-      this.__ctrlMap[key] = control;
     }
   }
 });

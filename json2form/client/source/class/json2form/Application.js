@@ -161,7 +161,7 @@ qx.Class.define("json2form.Application", {
       this.__jsonSchema.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        this.__formTitle.setValue(value["title"]);
+        this.__formTitle.setValue("<br>" + value["title"] + "<br>");
         this.__formDescription.setValue(value["description"]);
         this.__form.setJsonSchema(value["properties"]);
       });
