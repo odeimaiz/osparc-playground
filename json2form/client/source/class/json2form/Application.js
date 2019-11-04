@@ -93,7 +93,7 @@ qx.Class.define("json2form.Application", {
       const formDataLayout = this.__buildJsonLayout("formData");
       this.__formData = formDataLayout.getChildren()[1];
 
-      const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
+      const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
       hBox.add(uiSchemaLayout, {
         flex: 1
       });
@@ -101,7 +101,7 @@ qx.Class.define("json2form.Application", {
         flex: 1
       });
 
-      const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
+      const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
       jsonsLayout.add(jsonSchemaLayout, {
         flex: 1
       });
