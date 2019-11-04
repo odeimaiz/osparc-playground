@@ -64,16 +64,6 @@ qx.Class.define("json2form.form.Auto", {
     this.__ctrlMap = {};
     this.__formCtrl = new qx.data.controller.Form(null, this);
     this.__boxCtrl = {};
-
-    /*
-    const model = this.__model = formCtrl.createModel(true);
-    model.addListener("changeBubble", e => {
-      if (!this.__settingData) {
-        this.fireDataEvent("changeData", this.getData());
-      }
-    },
-    this);
-    */
   },
 
   properties: {
@@ -94,12 +84,7 @@ qx.Class.define("json2form.form.Auto", {
       init: {},
       event: "changeFormData",
       apply: "_applyFormData"
-    }/*,
-
-    propForm: {
-      check: "qx.ui.form.renderer.Single",
-      init: new qx.ui.form.renderer.Single()
-    }*/
+    }
   },
 
   events: {
@@ -124,6 +109,7 @@ qx.Class.define("json2form.form.Auto", {
       for (const key in jsonSchema) {
         this.__addField(jsonSchema[key], key);
       }
+
       const model = this.__model = this.__formCtrl.createModel(true);
       model.addListener("changeBubble", e => {
         if (!this.__settingData) {
@@ -184,9 +170,6 @@ qx.Class.define("json2form.form.Auto", {
       for (let key in props) {
         let getter = "get" + qx.lang.String.firstUp(key);
         data[key] = model[getter]();
-        if (data[key] === null || data[key] === "null") {
-          delete data[key];
-        }
       }
 
       return data;
