@@ -105,9 +105,15 @@ qx.Class.define("json2form.form.Auto", {
     _applyJsonSchema: function(jsonSchema) {
       this.__settingData = true;
 
+      const oldData = this.getData();
+
       this.__removeAll();
       for (const key in jsonSchema) {
         this.__addField(jsonSchema[key], key);
+      }
+
+      if (oldData) {
+        this.setData(oldData);
       }
 
       const model = this.__model = this.__formCtrl.createModel(true);
@@ -158,12 +164,25 @@ qx.Class.define("json2form.form.Auto", {
     },
 
     /**
+     * load new data into the data main model
+     *
+     * @param data {let} map with key value pairs to apply
+     * @param relax {let} ignore non existing keys
+     */
+    setData: function(data, relax) {
+      this.__setData(this.__model, data, relax);
+    },
+
+    /**
      * turn a model object into a plain data structure
      *
      * @param model {let} TODOC
      * @return {let} TODOC
      */
     __getData: function(model) {
+      if (model === null) {
+        return null;
+      }
       let props = model.constructor.$$properties;
       let data = {};
 
@@ -173,6 +192,36 @@ qx.Class.define("json2form.form.Auto", {
       }
 
       return data;
+    },
+
+
+    /**
+     * load new data into a model
+     * if relax is set unknown properties will be ignored
+     *
+     * @param model {let} TODOC
+     * @param data {let} TODOC
+     * @param relax {let} TODOC
+     */
+    __setData: function(model, data, relax) {
+      this.__settingData = true;
+
+      for (let key in data) {
+        this.getControl(key).setEnabled(true);
+        let upkey = qx.lang.String.firstUp(key);
+        let setter = "set" + upkey;
+        let value = data[key];
+        if (relax && !model[setter]) {
+          continue;
+        }
+        model[setter](value);
+      }
+
+      this.__settingData = false;
+
+      /* only fire ONE if there was an attempt at change */
+
+      this.fireDataEvent("changeData", this.getData());
     },
 
     __removeAll: function() {
@@ -198,6 +247,7 @@ qx.Class.define("json2form.form.Auto", {
         s.widget = {
           type: {
             string: "Text",
+            password: "Password",
             integer: "Spinner",
             number: "Number",
             boolean: "CheckBox",
