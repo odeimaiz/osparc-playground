@@ -22,6 +22,216 @@ qx.Class.define("json2form.FakeData", {
   statics: {
     fakeJsonSchema: function() {
       return json2form.DataUtils.stringify({
+        "$id": "https://osparc.io/schemas/data-schema.json",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Selected Entity Properties",
+        "description": "A form for entities",
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          },
+          "color": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 256
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "transformation": {
+            "title": "Transformation",
+            "type": "object",
+            "properties": {
+              "rotation": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "unit": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "value"
+                ]
+              },
+              "translation": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "unit": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "value"
+                ]
+              }
+            }
+          },
+          "parameters": {
+            "type": "object",
+            "title": "Parameters",
+            "properties": {
+            "radius": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ]
+            },
+            "height": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ]
+            },
+            "centered": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+        }
+      });
+    },
+
+    fakeUiSchema: function() {
+      return json2form.DataUtils.stringify({
+        "name": {
+          "ui:widget": "textarea",
+          "ui:autofocus": true
+        },
+        "visible": {
+          "ui:icon": "https://img.icons8.com/ios/50/000000/visible.png"
+        },
+        "color": {
+          "ui:widget": "colorpicker"
+        },
+        "opacity": {
+          "ui:widget": "range"
+        },
+        "transformation": {
+          "rotation": {
+            "value": {
+              "ui:widget": "field"
+            },
+            "unit": {
+              "ui:widget": "field"
+            }
+          },
+          "translation": {
+            "ui:widget": "quantity3"
+          }
+        },
+        "parameters": {
+          "radius": {
+            "ui:widget": "quantity"
+          },
+          "height": {
+            "ui:widget": "quantity"
+          },
+          "centered": {
+            "ui:widget": "radio"
+          }
+        }
+      });
+    },
+
+    fakeFormData: function() {
+      return json2form.DataUtils.stringify({
+        "name": "Red Cylinder",
+        "visible": true,
+        "color": [
+          248,
+          6,
+          143
+        ],
+        "opacity": 100,
+        "transformation": {
+          "rotation": {
+            "value": [
+              0,
+              0,
+              0
+            ],
+            "unit": "deg"
+          },
+          "translation": {
+            "value": [
+              100,
+              0,
+              0
+            ],
+            "unit": "mm"
+          }
+        },
+        "parameters": {
+          "radius": {
+            "value": 19.1055,
+            "unit": "mm"
+          },
+          "height": {
+            "value": 43,
+            "unit": "mm"
+          },
+          "centered": false
+        },
+        "materials": []
+      });
+    },
+
+    fakeJsonSchema2: function() {
+      return json2form.DataUtils.stringify({
         "title": "A registration form",
         "description": "A simple form example.",
         "type": "object",
@@ -61,7 +271,7 @@ qx.Class.define("json2form.FakeData", {
       });
     },
 
-    fakeUiSchema: function() {
+    fakeUiSchema2: function() {
       return json2form.DataUtils.stringify({
         "firstName": {
           "ui:autofocus": true,
@@ -90,7 +300,7 @@ qx.Class.define("json2form.FakeData", {
       });
     },
 
-    fakeFormData: function() {
+    fakeFormData2: function() {
       return json2form.DataUtils.stringify({
         "firstName": "Chuck",
         "lastName": "Norris",
