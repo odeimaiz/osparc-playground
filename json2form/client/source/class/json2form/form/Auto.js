@@ -98,10 +98,7 @@ qx.Class.define("json2form.form.Auto", {
     __formCtrl: null,
 
     _applyJsonSchema: function(jsonSchema) {
-      const items = this.getItems();
-      for (const itemKey in items) {
-        this.remove(items[itemKey]);
-      }
+      this.__removeAll();
       this.__addProperties(jsonSchema);
     },
 
@@ -110,7 +107,18 @@ qx.Class.define("json2form.form.Auto", {
     },
 
     _applyFormData: function(formData) {
-      console.log(formData);
+      for (const itemKey in formData) {
+        if (itemKey in this.__ctrlMap) {
+          this.__ctrlMap[itemKey].setValue(formData[itemKey]);
+        }
+      }
+    },
+
+    __removeAll: function() {
+      const items = this.getItems();
+      for (const itemKey in items) {
+        this.remove(items[itemKey]);
+      }
     },
 
     __addProperties: function(props) {
