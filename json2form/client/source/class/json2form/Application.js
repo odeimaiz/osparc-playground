@@ -129,7 +129,9 @@ qx.Class.define("json2form.Application", {
         flex: 1
       });
       form.addListener("changeData", e => {
-        this.__formData.setValue(json2form.DataUtils.stringify(e.getData()));
+        const data = e.getData();
+        console.log("Data changed", data);
+        this.__formData.setValue(json2form.DataUtils.stringify(data));
       }, this);
 
       return formLayout;
