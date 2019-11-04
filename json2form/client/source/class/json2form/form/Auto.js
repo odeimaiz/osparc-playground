@@ -270,8 +270,8 @@ qx.Class.define("json2form.form.Auto", {
           setup = this.__setupTextField;
           break;
         case "Number":
-          control = new qx.ui.form.TextField();
-          setup = this.__setupNumberField;
+          control = new qx.ui.form.Spinner();
+          setup = this.__setupSpinner;
           break;
         case "Spinner":
           control = new qx.ui.form.Spinner();
@@ -306,7 +306,12 @@ qx.Class.define("json2form.form.Auto", {
           setup = this.__setupFileButton;
           break;
         default:
-          throw new Error("unknown widget type " + s.widget.type);
+          // throw new Error("unknown widget type " + s.widget.type);
+          console.log("unknown widget type " + s.type);
+          break;
+      }
+      if (control === undefined) {
+        return;
       }
       this.__ctrlMap[key] = control;
       let option = {}; // could use this to pass on info to the form renderer
