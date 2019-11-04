@@ -232,6 +232,9 @@ qx.Class.define("json2form.form.Auto", {
     },
 
     __addField: function(s, key) {
+      if (!s.title) {
+        s.title = key;
+      }
       if (s.default) {
         if (!s.set) {
           s.set = {};
