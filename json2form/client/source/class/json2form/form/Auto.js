@@ -64,6 +64,16 @@ qx.Class.define("json2form.form.Auto", {
     this.__ctrlMap = {};
     this.__formCtrl = new qx.data.controller.Form(null, this);
     this.__boxCtrl = {};
+
+    /*
+    const model = this.__model = formCtrl.createModel(true);
+    model.addListener("changeBubble", e => {
+      if (!this.__settingData) {
+        this.fireDataEvent("changeData", this.getData());
+      }
+    },
+    this);
+    */
   },
 
   properties: {
@@ -92,14 +102,37 @@ qx.Class.define("json2form.form.Auto", {
     }*/
   },
 
+  events: {
+    /**
+     * fire when the form changes content and
+     * and provide access to the data
+     */
+    "changeData": "qx.event.type.Data"
+  },
+
   members: {
     __boxCtrl: null,
     __ctrlMap: null,
     __formCtrl: null,
+    __model: null,
+    __settingData: false,
 
     _applyJsonSchema: function(jsonSchema) {
+      this.__settingData = true;
+
       this.__removeAll();
-      this.__addProperties(jsonSchema);
+      for (const key in jsonSchema) {
+        this.__addField(jsonSchema[key], key);
+      }
+      const model = this.__model = this.__formCtrl.createModel(true);
+      model.addListener("changeBubble", e => {
+        if (!this.__settingData) {
+          this.fireDataEvent("changeData", this.getData());
+        }
+      },
+      this);
+
+      this.__settingData = false;
     },
 
     _applyUiSchema: function(uiSchema) {
@@ -107,11 +140,56 @@ qx.Class.define("json2form.form.Auto", {
     },
 
     _applyFormData: function(formData) {
+      this.__settingData = true;
+
       for (const itemKey in formData) {
-        if (itemKey in this.__ctrlMap) {
-          this.__ctrlMap[itemKey].setValue(formData[itemKey]);
+        const ctrl = this.getControl(itemKey);
+        if (ctrl) {
+          ctrl.setValue(formData[itemKey]);
         }
       }
+
+      this.__settingData = false;
+    },
+
+    /**
+     * get a handle to the control with the given name
+     *
+     * @param key {let} key of the the field
+     * @return {let} control associated with the field
+     */
+    getControl: function(key) {
+      return this.__ctrlMap[key];
+    },
+
+    /**
+     * fetch the data for this form
+     *
+     * @return {let} all data from the form
+     */
+    getData: function() {
+      return this.__getData(this.__model);
+    },
+
+    /**
+     * turn a model object into a plain data structure
+     *
+     * @param model {let} TODOC
+     * @return {let} TODOC
+     */
+    __getData: function(model) {
+      let props = model.constructor.$$properties;
+      let data = {};
+
+      for (let key in props) {
+        let getter = "get" + qx.lang.String.firstUp(key);
+        data[key] = model[getter]();
+        if (data[key] === null || data[key] === "null") {
+          delete data[key];
+        }
+      }
+
+      return data;
     },
 
     __removeAll: function() {
@@ -121,13 +199,7 @@ qx.Class.define("json2form.form.Auto", {
       }
     },
 
-    __addProperties: function(props) {
-      for (const key in props) {
-        this.__addProperty(props[key], key);
-      }
-    },
-
-    __addProperty: function(s, key) {
+    __addField: function(s, key) {
       if (s.default) {
         if (!s.set) {
           s.set = {};
@@ -275,6 +347,10 @@ qx.Class.define("json2form.form.Auto", {
       this.__setupTextField(s, key, control);
     },
     __setupTextField: function(s, key) {
+      if (!s.set) {
+        s.set = {};
+      }
+      s.set.value = s.defaultValue ? String(s.defaultValue) : "";
       this.__formCtrl.addBindingOptions(key,
         { // model2target
           converter: function(data) {

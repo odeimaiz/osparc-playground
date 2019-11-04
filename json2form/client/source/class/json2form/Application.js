@@ -120,6 +120,9 @@ qx.Class.define("json2form.Application", {
       formLayout.add(propsWidget, {
         flex: 1
       });
+      form.addListener("changeData", e => {
+        this.__formData.setValue(json2form.DataUtils.stringify(e.getData()));
+      }, this);
 
       return formLayout;
     },
