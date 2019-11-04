@@ -54,10 +54,13 @@ qx.Class.define("json2form.Application", {
     },
 
     __buildLayout: function() {
+      const vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
+
       const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
 
       const jsonsPanel = this.__buildJsons();
       const propsWidget = this.__buildForm();
+      const footer = this.__buildFooter();
 
       hBox.add(jsonsPanel, {
         width: "60%"
@@ -66,8 +69,13 @@ qx.Class.define("json2form.Application", {
         width: "40%"
       });
 
+      vBox.add(hBox, {
+        flex: 1
+      });
+      vBox.add(footer);
+
       const doc = this.getRoot();
-      doc.add(hBox, {
+      doc.add(vBox, {
         top: 10,
         bottom: 10,
         left: 10,
@@ -143,6 +151,10 @@ qx.Class.define("json2form.Application", {
       return vBox;
     },
 
+    __buildFooter: function() {
+      return new json2form.LinkButton("Powered by qooxdoo-json2form", "https://github.com/odeimaiz/osparc-playground");
+    },
+
     __bindElements: function() {
       /*
       this.__jsonSchema.bind("value", this.__form, "jsonSchema", {
@@ -164,7 +176,7 @@ qx.Class.define("json2form.Application", {
       this.__jsonSchema.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        this.__formTitle.setValue("<br>" + value["title"] + "<br>");
+        this.__formTitle.setValue("<b>" + value["title"] + "<b>");
         this.__formDescription.setValue(value["description"]);
         this.__form.setJsonSchema(value["properties"]);
       });
