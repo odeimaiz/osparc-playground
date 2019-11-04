@@ -21,7 +21,7 @@ qx.Class.define("json2form.FakeData", {
 
   statics: {
     fakeJsonSchema: function() {
-      return JSON.stringify({
+      return json2form.DataUtils.stringify({
         "title": "A registration form",
         "description": "A simple form example.",
         "type": "object",
@@ -58,11 +58,11 @@ qx.Class.define("json2form.FakeData", {
             "minLength": 10
           }
         }
-      }, null, 4);
+      });
     },
 
     fakeUiSchema: function() {
-      return JSON.stringify({
+      return json2form.DataUtils.stringify({
         "firstName": {
           "ui:autofocus": true,
           "ui:emptyValue": ""
@@ -87,17 +87,17 @@ qx.Class.define("json2form.FakeData", {
             "inputType": "tel"
           }
         }
-      }, null, 4);
+      });
     },
 
     fakeFormData: function() {
-      return JSON.stringify({
+      return json2form.DataUtils.stringify({
         "firstName": "Chuck",
         "lastName": "Norris",
         "age": 75,
         "bio": "Roundhouse kicking asses since 1940",
         "password": "noneed"
-      }, null, 4);
+      });
     }
   }
 });
