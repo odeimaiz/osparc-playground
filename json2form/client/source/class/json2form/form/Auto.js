@@ -254,7 +254,8 @@ qx.Class.define("json2form.form.Auto", {
             integer: "Spinner",
             number: "Number",
             boolean: "CheckBox",
-            data: "FileButton"
+            data: "FileButton",
+            array: "Array"
           }[type]
         };
       }
@@ -304,6 +305,10 @@ qx.Class.define("json2form.form.Auto", {
         case "FileButton":
           control = new qx.ui.form.TextField();
           setup = this.__setupFileButton;
+          break;
+        case "Array":
+          control = new json2form.form.ArraySpinner();
+          setup = this.__setupArray;
           break;
         default:
           // throw new Error("unknown widget type " + s.widget.type);
@@ -524,6 +529,10 @@ qx.Class.define("json2form.form.Auto", {
           }
         }
       );
+    },
+
+    __setupArray: function(s, key) {
+      console.log(s, key);
     }
   }
 });
