@@ -96,6 +96,7 @@ qx.Class.define("json2form.form.ArraySpinner",
       check : "Number",
       apply : "__applyNItems"
     },
+
     // overridden
     appearance:
     {
@@ -195,16 +196,6 @@ qx.Class.define("json2form.form.ArraySpinner",
   members: {
     __widgets: null,
 
-
-    /** Saved last value in case invalid text is entered */
-    __lastValidValue : null,
-
-    /** Whether the page-up button has been pressed */
-    __pageUpMode : false,
-
-    /** Whether the page-down button has been pressed */
-    __pageDownMode : false,
-
     __applyNItems: function(value, old) {
       for (let i=0; i<value; i++) {
         const newWidget =  new qx.ui.form.Spinner(this.getMinimum(), this.getValue(), this.getMaximum());
@@ -241,7 +232,7 @@ qx.Class.define("json2form.form.ArraySpinner",
     // overridden
     tabFocus: function() {
       if (this.__widgets.length) {
-        this.__widgets[i].tabFocus();
+        this.__widgets[0].tabFocus();
       }
     },
 
@@ -279,14 +270,12 @@ qx.Class.define("json2form.form.ArraySpinner",
       }
     },
 
-
     // overridden
     _applyEnabled: function(value, old) {
       this.__widgets.forEach(widget => {
         widget.setEnabled(value);
       })
     },
-
 
     _checkValue: function(value) {
       if (typeof value === "number") {
@@ -302,19 +291,7 @@ qx.Class.define("json2form.form.ArraySpinner",
       return false;
     },
 
-
-    /**
-     * Apply routine for the value property.
-     *
-     * It disables / enables the buttons and handles the wrap around.
-     *
-     * @param value {Number} The new value of the spinner
-     * @param old {Number} The former value of the spinner
-     */
     _applyValue: function(values, old) {
-      // save the last valid value of the spinner
-      this.__lastValidValue = values;
-
       // write the value of the spinner to the textfield
       if (values !== null) {
         for (let i=0; i<values.length; i++) {
@@ -325,65 +302,28 @@ qx.Class.define("json2form.form.ArraySpinner",
       }
     },
 
-
-    /**
-     * Apply routine for the editable property.<br/>
-     * It sets the textfield of the spinner to not read only.
-     *
-     * @param value {Boolean} The new value of the editable property
-     * @param old {Boolean} The former value of the editable property
-     */
     _applyEditable: function(value, old) {
       this.__widgets.forEach(widget => {
         widget.setEditable(value);
       });
     },
 
-
-    /**
-     * Apply routine for the wrap property.<br/>
-     * Enables all buttons if the wrapping is enabled.
-     *
-     * @param value {Boolean} The new value of the wrap property
-     * @param old {Boolean} The former value of the wrap property
-     */
     _applyWrap : function(value, old) {
       this.__widgets.forEach(widget => {
         widget.setWrap(value);
       });
     },
 
-
-    /**
-     * Apply routine for the numberFormat property.<br/>
-     * When setting a number format, the display of the
-     * value in the text-field will be changed immediately.
-     *
-     * @param value {Boolean} The new value of the numberFormat property
-     * @param old {Boolean} The former value of the numberFormat property
-     */
     _applyNumberFormat : function(value, old) {
       this.__widgets.forEach(widget => {
         widget.setApplyNumberFormat(value);
       });
     },
 
-    /**
-     * Returns the element, to which the content padding should be applied.
-     *
-     * @return {qx.ui.core.Widget} The content padding target.
-     */
     _getContentPaddingTarget : function() {
       return this.getChildControl("textfield");
     },
 
-    /**
-     * Normalizes the incoming value to be in the valid range and
-     * applies it to the {@link #value} afterwards.
-     *
-     * @param value {Number} Any number
-     * @return {Number} The normalized number
-     */
     gotoValue : function(value) {
       return this.setValue(Math.min(this.getMaximum(), Math.max(this.getMinimum(), value)));
     },
