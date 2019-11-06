@@ -228,14 +228,12 @@ qx.Class.define("json2form.form.ArraySpinner",
       invalid : true
     },
 
-
     // overridden
     tabFocus: function() {
       if (this.__widgets.length) {
         this.__widgets[0].tabFocus();
       }
     },
-
 
     /*
     ---------------------------------------------------------------------------
@@ -318,28 +316,6 @@ qx.Class.define("json2form.form.ArraySpinner",
       this.__widgets.forEach(widget => {
         widget.setApplyNumberFormat(value);
       });
-    },
-
-    _getContentPaddingTarget : function() {
-      return this.getChildControl("textfield");
-    },
-
-    gotoValue : function(value) {
-      return this.setValue(Math.min(this.getMaximum(), Math.max(this.getMinimum(), value)));
-    },
-
-    // overridden
-    focus : function()
-    {
-      this.base(arguments);
-      this.getChildControl("textfield").getFocusElement().focus();
-    }
-  },
-
-
-  destruct: function() {
-    if (qx.core.Environment.get("qx.dynlocale")) {
-      qx.locale.Manager.getInstance().removeListener("changeLocale", this._onChangeLocale, this);
     }
   }
 });
