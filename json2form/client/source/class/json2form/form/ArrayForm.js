@@ -67,7 +67,7 @@ qx.Class.define("json2form.form.ArrayForm", {
       apply : "_applyWrap"
     },
 
-    /** Controls whether the textfield of the spinner is editable or not */
+    /** Controls whether the items are editable or not */
     editable: {
       check : "Boolean",
       init : true,
@@ -123,13 +123,6 @@ qx.Class.define("json2form.form.ArrayForm", {
       APPLY METHODS
     ---------------------------------------------------------------------------
     */
-
-    // overridden
-    _applyEnabled: function(value, old) {
-      this.__widgets.forEach(widget => {
-        widget.setEnabled(value);
-      })
-    },
 
     _applyEditable: function(value, old) {
       this.__widgets.forEach(widget => {
