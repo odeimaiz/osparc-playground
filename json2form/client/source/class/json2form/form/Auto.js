@@ -271,9 +271,6 @@ qx.Class.define("json2form.form.Auto", {
           setup = this.__setupTextField;
           break;
         case "Number":
-          control = new qx.ui.form.Spinner();
-          setup = this.__setupSpinner;
-          break;
         case "Spinner":
           control = new qx.ui.form.Spinner();
           control.set({
@@ -308,7 +305,11 @@ qx.Class.define("json2form.form.Auto", {
           break;
         case "Array":
           control = new json2form.form.ArraySpinner();
-          setup = this.__setupArray;
+          control.set({
+            maximum: 10000,
+            minimum: -10000
+          });
+          setup = this.__setupArraySpinner;
           break;
         default:
           // throw new Error("unknown widget type " + s.widget.type);
@@ -531,8 +532,44 @@ qx.Class.define("json2form.form.Auto", {
       );
     },
 
-    __setupArray: function(s, key) {
-      console.log(s, key);
+    __setupArraySpinner: function(s, key) {
+      if (!s.set) {
+        s.set = {};
+      }
+      if ("minItems" in s) {
+        s.set.nItems = parseInt(String(s.minItems));
+      } else {
+        s.set.nItems = 2;
+      }
+      if ("minimum" in s.items) {
+        s.set.minimum = parseInt(String(s.items.minimum));
+      }
+      if ("maximum" in s.items) {
+        s.set.maximum = parseInt(String(s.items.maximum));
+      }
+      if ("default" in s.items) {
+        s.set.value = parseInt(String(s.items.default));
+      } else {
+        s.set.value = 0;
+      }
+      this.__formCtrl.addBindingOptions(key,
+        { // model2target
+          converter: function(data) {
+            let d = String(data);
+            if (/^\d+$/.test(d)) {
+              return parseInt(d);
+            }
+            return null;
+          }
+        },
+        { // target2model
+          converter: function(data) {
+            return parseInt(data);
+          }
+        }
+      );
+
+
     }
   }
 });

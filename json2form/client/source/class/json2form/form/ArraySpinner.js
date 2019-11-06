@@ -79,20 +79,23 @@ qx.Class.define("json2form.form.ArraySpinner",
    * @param value {Number} Current value
    * @param max {Number} Maximum value
    */
-  construct: function(min, value, max) {
+  construct: function(nItems) {
     this.base(arguments);
 
     // Force hBox layout
     this._setLayout(new qx.ui.layout.HBox());
 
-    const nWidgets = 3;
-    for (let i=0; i<nWidgets; i++) {
-      const newWidget =  new qx.ui.form.Spinner(min, value, max);
-      this.addWidget(newWidget);
+    this.__widgets = [];
+    if (nItems) {
+      this.setNItems(nItems)
     }
   },
 
   properties: {
+    nItems: {
+      check : "Number",
+      apply : "__applyNItems"
+    },
     // overridden
     appearance:
     {
@@ -190,6 +193,9 @@ qx.Class.define("json2form.form.ArraySpinner",
   */
 
   members: {
+    __widgets: null,
+
+
     /** Saved last value in case invalid text is entered */
     __lastValidValue : null,
 
@@ -199,14 +205,21 @@ qx.Class.define("json2form.form.ArraySpinner",
     /** Whether the page-down button has been pressed */
     __pageDownMode : false,
 
+    __applyNItems: function(value, old) {
+      for (let i=0; i<value; i++) {
+        const newWidget =  new qx.ui.form.Spinner(this.getMinimum(), this.getValue(), this.getMaximum());
+        this.addWidget(newWidget);
+      }
+    },
 
     addWidget: function(widget) {
       widget.addListener("changeValue", e => {
-        this.fireDataEvent("changeValue", e.getdata());
+        this.fireDataEvent("changeValue", e.getData());
       }, this)
       this._add(widget, {
         flex: 1
       })
+      this.__widgets.push(widget);
     },
 
     /*
@@ -302,16 +315,11 @@ qx.Class.define("json2form.form.ArraySpinner",
 
 
     // overridden
-    tabFocus : function()
-    {
-      var field = this.getChildControl("textfield");
-
-      field.getFocusElement().focus();
-      field.selectAllText();
+    tabFocus: function() {
+      if (this.__widgets.length) {
+        this.__widgets[i].tabFocus();
+      }
     },
-
-
-
 
 
     /*
@@ -319,18 +327,11 @@ qx.Class.define("json2form.form.ArraySpinner",
       APPLY METHODS
     ---------------------------------------------------------------------------
     */
+    _applyMinimum: function(value, old) {
+      this.__widgets.forEach(widget => {
+        widget.setMinimum(value);
+      })
 
-    /**
-     * Apply routine for the minimum property.
-     *
-     * It sets the value of the spinner to the maximum of the current spinner
-     * value and the given min property value.
-     *
-     * @param value {Number} The new value of the min property
-     * @param old {Number} The old value of the min property
-     */
-    _applyMinimum : function(value, old)
-    {
       if (this.getMaximum() < value) {
         this.setMaximum(value);
       }
@@ -340,18 +341,11 @@ qx.Class.define("json2form.form.ArraySpinner",
       }
     },
 
+    _applyMaximum: function(value, old) {
+      this.__widgets.forEach(widget => {
+        widget.setMaximum(value);
+      })
 
-    /**
-     * Apply routine for the maximum property.
-     *
-     * It sets the value of the spinner to the minimum of the current spinner
-     * value and the given max property value.
-     *
-     * @param value {Number} The new value of the max property
-     * @param old {Number} The old value of the max property
-     */
-    _applyMaximum : function(value, old)
-    {
       if (this.getMinimum() > value) {
         this.setMinimum(value);
       }
@@ -363,30 +357,23 @@ qx.Class.define("json2form.form.ArraySpinner",
 
 
     // overridden
-    _applyEnabled : function(value, old)
-    {
+    _applyEnabled: function(value, old) {
       this.base(arguments, value, old);
     },
 
 
-    /**
-     * Check whether the value being applied is allowed.
-     *
-     * If you override this to change the allowed type, you will also
-     * want to override {@link #_applyValue}, {@link #_applyMinimum},
-     * {@link #_applyMaximum}, {@link #_countUp}, {@link #_countDown}, and
-     * {@link #_onTextChange} methods as those cater specifically to numeric
-     * values.
-     *
-     * @param value {var}
-     *   The value being set
-     * @return {Boolean}
-     *   <i>true</i> if the value is allowed;
-     *   <i>false> otherwise.
-     */
-    _checkValue : function(value) {
-      // return typeof value === "number" && value >= this.getMinimum() && value <= this.getMaximum();
-      return true;
+    _checkValue: function(value) {
+      if (typeof value === "number") {
+        return value >= this.getMinimum() && value <= this.getMaximum();
+      } else if (Array.isArray(value)) {
+        // return value.every(this._checkValue);
+        let valid = true;
+        for (let i=0; i<value.length && valid; i++) {
+          valid = value[i] >= this.getMinimum() && value[i] <= this.getMaximum();
+        }
+        return valid;
+      }
+      return false;
     },
 
 
@@ -398,26 +385,18 @@ qx.Class.define("json2form.form.ArraySpinner",
      * @param value {Number} The new value of the spinner
      * @param old {Number} The former value of the spinner
      */
-    _applyValue: function(value, old)
-    {
-      console.log(this.getChildrenContainer());
-      /*
-      var textField = this.getChildControl("textfield");
-
+    _applyValue: function(values, old) {
       // save the last valid value of the spinner
-      this.__lastValidValue = value;
+      this.__lastValidValue = values;
 
       // write the value of the spinner to the textfield
-      if (value !== null) {
-        if (this.getNumberFormat()) {
-          textField.setValue(this.getNumberFormat().format(value));
-        } else {
-          textField.setValue(value + "");
+      if (values !== null) {
+        for (let i=0; i<values.length; i++) {
+          if (i < this.__widgets.length) {
+            this.__widgets[i].setValue(values[i]);
+          }
         }
-      } else {
-        textField.setValue("");
       }
-      */
     },
 
 
