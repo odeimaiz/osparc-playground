@@ -54,6 +54,7 @@ qx.Class.define("json2form.form.ArrayForm", {
       apply : "_applyNItems"
     },
 
+
     // overridden
     focusable: {
       refine : true,
