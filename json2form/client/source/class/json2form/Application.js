@@ -56,7 +56,7 @@ qx.Class.define("json2form.Application", {
     __buildLayout: function() {
       const vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
 
-      const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
+      const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(20, null, "separator-horizontal"));
 
       const jsonsPanel = this.__buildJsons();
       const propsWidget = this.__buildForm();
@@ -75,11 +75,12 @@ qx.Class.define("json2form.Application", {
       vBox.add(footer);
 
       const doc = this.getRoot();
+      const padding = 20;
       doc.add(vBox, {
-        top: 10,
-        bottom: 10,
-        left: 10,
-        right: 10
+        top: padding,
+        bottom: padding,
+        left: padding,
+        right: padding
       });
     },
 
