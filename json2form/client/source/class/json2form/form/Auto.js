@@ -552,24 +552,6 @@ qx.Class.define("json2form.form.Auto", {
       } else {
         s.set.value = 0;
       }
-      this.__formCtrl.addBindingOptions(key,
-        { // model2target
-          converter: function(data) {
-            let d = String(data);
-            if (/^\d+$/.test(d)) {
-              return parseInt(d);
-            }
-            return null;
-          }
-        },
-        { // target2model
-          converter: function(data) {
-            return parseInt(data);
-          }
-        }
-      );
-
-
     }
   }
 });
