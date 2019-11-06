@@ -36,14 +36,11 @@ qx.Class.define("json2form.form.ArraySpinner",
   */
 
   /**
-   * @param min {Number} Minimum value
-   * @param value {Number} Current value
-   * @param max {Number} Maximum value
+   * @param nItems {Number} Number of spinners
    */
   construct: function(nItems) {
     this.base(arguments);
 
-    // Force hBox layout
     this._setLayout(new qx.ui.layout.HBox());
 
     this.__widgets = [];
@@ -58,37 +55,33 @@ qx.Class.define("json2form.form.ArraySpinner",
       apply : "__applyNItems"
     },
 
+
     // overridden
-    appearance:
-    {
+    appearance: {
       refine : true,
       init : "spinner"
     },
 
     // overridden
-    focusable :
-    {
+    focusable: {
       refine : true,
       init : true
     },
 
     /** The amount to increment on each event (keypress or pointerdown) */
-    singleStep:
-    {
+    singleStep: {
       check : "Number",
       init : 1
     },
 
     /** The amount to increment on each pageup/pagedown keypress */
-    pageStep:
-    {
+    pageStep: {
       check : "Number",
       init : 10
     },
 
     /** minimal value of the Range object */
-    minimum:
-    {
+    minimum: {
       check : "Number",
       apply : "_applyMinimum",
       init : 0,
@@ -96,8 +89,7 @@ qx.Class.define("json2form.form.ArraySpinner",
     },
 
     /** The value of the spinner. */
-    value:
-    {
+    value: {
       check : "this._checkValue(value)",
       nullable : true,
       apply : "_applyValue",
@@ -106,8 +98,7 @@ qx.Class.define("json2form.form.ArraySpinner",
     },
 
     /** maximal value of the Range object */
-    maximum:
-    {
+    maximum: {
       check : "Number",
       apply : "_applyMaximum",
       init : 100,
@@ -115,44 +106,32 @@ qx.Class.define("json2form.form.ArraySpinner",
     },
 
     /** whether the value should wrap around */
-    wrap:
-    {
+    wrap: {
       check : "Boolean",
       init : false,
       apply : "_applyWrap"
     },
 
     /** Controls whether the textfield of the spinner is editable or not */
-    editable :
-    {
+    editable: {
       check : "Boolean",
       init : true,
       apply : "_applyEditable"
     },
 
     /** Controls the display of the number in the textfield */
-    numberFormat :
-    {
+    numberFormat: {
       check : "qx.util.format.NumberFormat",
       apply : "_applyNumberFormat",
       nullable : true
     },
 
     // overridden
-    allowShrinkY :
-    {
+    allowShrinkY: {
       refine : true,
       init : false
     }
   },
-
-
-
-  /*
-  *****************************************************************************
-     MEMBERS
-  *****************************************************************************
-  */
 
   members: {
     __widgets: null,
