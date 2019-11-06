@@ -15,17 +15,11 @@
 
 ************************************************************************ */
 
-qx.Class.define("json2form.form.ArraySpinner",
-{
-  extend : qx.ui.core.Widget,
+qx.Class.define("json2form.form.ArraySpinner", {
+  extend : json2form.form.ArrayForm,
   implement : [
     qx.ui.form.INumberForm,
-    qx.ui.form.IRange,
-    qx.ui.form.IForm
-  ],
-  include : [
-    qx.ui.core.MContentPadding,
-    qx.ui.form.MForm
+    qx.ui.form.IRange
   ],
 
 
@@ -39,33 +33,14 @@ qx.Class.define("json2form.form.ArraySpinner",
    * @param nItems {Number} Number of spinners
    */
   construct: function(nItems) {
-    this.base(arguments);
-
-    this._setLayout(new qx.ui.layout.HBox());
-
-    this.__widgets = [];
-    if (nItems) {
-      this.setNItems(nItems)
-    }
+    this.base(arguments, nItems);
   },
 
   properties: {
-    nItems: {
-      check : "Number",
-      apply : "__applyNItems"
-    },
-
-
     // overridden
     appearance: {
       refine : true,
       init : "spinner"
-    },
-
-    // overridden
-    focusable: {
-      refine : true,
-      init : true
     },
 
     /** The amount to increment on each event (keypress or pointerdown) */
@@ -105,73 +80,20 @@ qx.Class.define("json2form.form.ArraySpinner",
       event: "changeMaximum"
     },
 
-    /** whether the value should wrap around */
-    wrap: {
-      check : "Boolean",
-      init : false,
-      apply : "_applyWrap"
-    },
-
-    /** Controls whether the textfield of the spinner is editable or not */
-    editable: {
-      check : "Boolean",
-      init : true,
-      apply : "_applyEditable"
-    },
-
     /** Controls the display of the number in the textfield */
     numberFormat: {
       check : "qx.util.format.NumberFormat",
       apply : "_applyNumberFormat",
       nullable : true
-    },
-
-    // overridden
-    allowShrinkY: {
-      refine : true,
-      init : false
     }
   },
 
   members: {
-    __widgets: null,
-
-    __applyNItems: function(value, old) {
+    // overridden
+    _applyNItems: function(value, old) {
       for (let i=0; i<value; i++) {
         const newWidget =  new qx.ui.form.Spinner(this.getMinimum(), this.getValue(), this.getMaximum());
         this.addWidget(newWidget);
-      }
-    },
-
-    addWidget: function(widget) {
-      widget.addListener("changeValue", e => {
-        const data = [];
-        for (let i=0; i<this.__widgets.length; i++) {
-          const widget = this.__widgets[i];
-          data.push(widget.getValue());
-        }
-        this.fireDataEvent("changeValue", data);
-      }, this)
-      this._add(widget, {
-        flex: 1
-      })
-      this.__widgets.push(widget);
-    },
-
-
-    // overridden
-    /**
-     * @lint ignoreReferenceField(_forwardStates)
-     */
-    _forwardStates : {
-      focused : true,
-      invalid : true
-    },
-
-    // overridden
-    tabFocus: function() {
-      if (this.__widgets.length) {
-        this.__widgets[0].tabFocus();
       }
     },
 
@@ -208,13 +130,6 @@ qx.Class.define("json2form.form.ArraySpinner",
       }
     },
 
-    // overridden
-    _applyEnabled: function(value, old) {
-      this.__widgets.forEach(widget => {
-        widget.setEnabled(value);
-      })
-    },
-
     _checkValue: function(value) {
       if (typeof value === "number") {
         return value >= this.getMinimum() && value <= this.getMaximum();
@@ -238,18 +153,6 @@ qx.Class.define("json2form.form.ArraySpinner",
           }
         }
       }
-    },
-
-    _applyEditable: function(value, old) {
-      this.__widgets.forEach(widget => {
-        widget.setEditable(value);
-      });
-    },
-
-    _applyWrap : function(value, old) {
-      this.__widgets.forEach(widget => {
-        widget.setWrap(value);
-      });
     },
 
     _applyNumberFormat : function(value, old) {
