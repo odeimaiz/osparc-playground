@@ -1,59 +1,20 @@
 /* ************************************************************************
 
-   qooxdoo - the new era of web development
+   json2form
 
-   http://qooxdoo.org
+   https://osparc.io
 
    Copyright:
-     2004-2008 1&1 Internet AG, Germany, http://www.1und1.de
+     2019 IT'IS Foundation, https://itis.swiss
 
    License:
      MIT: https://opensource.org/licenses/MIT
-     See the LICENSE file in the project's top-level directory for details.
 
    Authors:
-     * Sebastian Werner (wpbasti)
-     * Andreas Ecker (ecker)
-     * Martin Wittemann (martinwittemann)
-     * Jonathan Weiß (jonathan_rass)
+     * Odei Maiz (odeimaiz)
 
 ************************************************************************ */
 
-/**
- * A *spinner* is a control that allows you to adjust a numerical value,
- * typically within an allowed range. An obvious example would be to specify the
- * month of a year as a number in the range 1 - 12.
- *
- * To do so, a spinner encompasses a field to display the current value (a
- * textfield) and controls such as up and down buttons to change that value. The
- * current value can also be changed by editing the display field directly, or
- * using mouse wheel and cursor keys.
- *
- * An optional {@link #numberFormat} property allows you to control the format of
- * how a value can be entered and will be displayed.
- *
- * A brief, but non-trivial example:
- *
- * <pre class='javascript'>
- * var s = new qx.ui.form.Spinner();
- * s.set({
- *   maximum: 3000,
- *   minimum: -3000
- * });
- * var nf = new qx.util.format.NumberFormat();
- * nf.setMaximumFractionDigits(2);
- * s.setNumberFormat(nf);
- * </pre>
- *
- * A spinner instance without any further properties specified in the
- * constructor or a subsequent *set* command will appear with default
- * values and behaviour.
- *
- * @childControl textfield {qx.ui.form.TextField} holds the current value of the spinner
- * @childControl upbutton {qx.ui.form.Button} button to increase the value
- * @childControl downbutton {qx.ui.form.Button} button to decrease the value
- *
- */
 qx.Class.define("json2form.form.ArraySpinner",
 {
   extend : qx.ui.core.Widget,
