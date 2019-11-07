@@ -106,7 +106,6 @@ qx.Class.define("json2form.form.Auto", {
       this.__settingData = true;
 
       const oldData = this.getData();
-
       this.__removeAll();
       for (const key in jsonSchema) {
         this.__addField(jsonSchema[key], key);
@@ -255,6 +254,7 @@ qx.Class.define("json2form.form.Auto", {
             number: "Number",
             boolean: "CheckBox",
             data: "FileButton",
+            object: "Group",
             array: "Array"
           }[type]
         };
@@ -311,18 +311,20 @@ qx.Class.define("json2form.form.Auto", {
           });
           setup = this.__setupArraySpinner;
           break;
+        case "Group":
+          // control = new json2form.form.Group();
+          setup = this.__setupGroup;
+          break;
         default:
-          // throw new Error("unknown widget type " + s.widget.type);
-          console.log("unknown widget type " + s.type);
+          console.error("unknown widget type " + s.type);
           break;
       }
       if (control === undefined) {
         return;
       }
-      this.__ctrlMap[key] = control;
+
       let option = {}; // could use this to pass on info to the form renderer
       this.add(control, s.title ? this["tr"](s.title):null, null, key, null, option);
-
       setup.call(this, s, key, control);
 
       if (s.set) {
@@ -552,6 +554,9 @@ qx.Class.define("json2form.form.Auto", {
       } else {
         s.set.value = 0;
       }
+    },
+
+    __setupGroup: function() {
     }
   }
 });
