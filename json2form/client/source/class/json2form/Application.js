@@ -29,9 +29,10 @@ qx.Class.define("json2form.Application", {
     __jsonSchema: null,
     __uiSchema: null,
     __formData: null,
-    __form: null,
     __formTitle: null,
     __formDescription: null,
+    __form: null,
+    __tree: null,
 
     /**
      * This method contains the initial application code and gets called 
@@ -135,6 +136,13 @@ qx.Class.define("json2form.Application", {
         this.__formData.setValue(json2form.DataUtils.stringify(data));
       }, this);
 
+
+      const tree = this.__tree = new json2form.tree.PropertyTree();
+      formLayout.add(tree, {
+        flex: 1
+      });
+
+
       return formLayout;
     },
 
@@ -182,16 +190,19 @@ qx.Class.define("json2form.Application", {
         this.__formTitle.setValue("<b>" + value["title"] + "<b>");
         this.__formDescription.setValue(value["description"]);
         this.__form.setJsonSchema(value["properties"]);
+        // this.__tree.setJsonSchema(json2form.FakeData.fakeJsonSchemaTree());
       });
       this.__uiSchema.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
         this.__form.setUiSchema(value);
+        this.__tree.setUiSchema(value);
       });
       this.__formData.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
         this.__form.setFormData(value);
+        this.__tree.setFormData(value);
       });
     },
 
