@@ -39,21 +39,8 @@ qx.Class.define("json2form.tree.PropertyTree", {
       createItem: () => new json2form.tree.PropertyTreeItem(),
       bindItem: (c, item, id) => {
         c.bindDefaultProperties(item, id);
-        /*
-        c.bindProperty("type", "formEntry", {
-          converter: function(data) {
-            console.log("type", type);
-            const control = new qx.ui.form.CheckBox();
-            const setup = this.__setupBoolField;
-
-            let option = {}; // could use this to pass on info to the form renderer
-            this.add(control, s.title ? this["tr"](s.title):null, null, key, null, option);
-            setup.call(this, s, key, control);
-
-            return control;
-          }
-        }, item, id);
-        */
+        c.bindProperty("key", "key", null, item, id);
+        c.bindProperty("type", "type", null, item, id);
       }
     });
   },
@@ -79,25 +66,11 @@ qx.Class.define("json2form.tree.PropertyTree", {
 
   members: {
     __populateTree: function(value, old) {
-      const rootModel = qx.data.marshal.Json.createModel(value, true);
-      this.setModel(rootModel);
-    },
-    __setupBoolField: function(s, key, control) {
-      if (!s.set) {
-        s.set = {};
-      }
-      this.__formCtrl.addBindingOptions(key,
-        { // model2target
-          converter: function(data) {
-            return data;
-          }
-        },
-        { // target2model
-          converter: function(data) {
-            return data;
-          }
-        }
-      );
+      const model = this.__model = qx.data.marshal.Json.createModel(value, true);
+      model.addListener("changeBubble", e => {
+        console.log(e.getData());
+      }, this);
+      this.setModel(model);
     }
   }
 });
