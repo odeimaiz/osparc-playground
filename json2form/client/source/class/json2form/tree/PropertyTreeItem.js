@@ -53,6 +53,9 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       this.addSpacer(); // from VirtualTreeItem
       this.addOpenButton(); // from VirtualTreeItem
 
+      this.addIcon(); // from VirtualTreeItem
+      this.addLabel(); // from VirtualTreeItem
+
       if (this.getFormEntry() !== null) {
         this.addWidget(this.getFormEntry());
       }

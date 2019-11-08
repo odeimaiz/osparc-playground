@@ -29,6 +29,7 @@ qx.Class.define("json2form.Application", {
     __jsonSchema: null,
     __uiSchema: null,
     __formData: null,
+    __jsonSchema2: null,
     __formTitle: null,
     __formDescription: null,
     __form: null,
@@ -89,6 +90,9 @@ qx.Class.define("json2form.Application", {
       const jsonSchemaLayout = this.__buildJsonLayout("JSONSchema");
       this.__jsonSchema = jsonSchemaLayout.getChildren()[1];
 
+      const jsonSchemaLayout2 = this.__buildJsonLayout("JSONSchema2");
+      this.__jsonSchema2 = jsonSchemaLayout2.getChildren()[1];
+
       const uiSchemaLayout = this.__buildJsonLayout("UISchema");
       this.__uiSchema = uiSchemaLayout.getChildren()[1];
 
@@ -96,18 +100,26 @@ qx.Class.define("json2form.Application", {
       this.__formData = formDataLayout.getChildren()[1];
 
       const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
-      hBox.add(uiSchemaLayout, {
+      hBox.add(jsonSchemaLayout, {
         flex: 1
       });
-      hBox.add(formDataLayout, {
+      hBox.add(jsonSchemaLayout2, {
+        flex: 1
+      });
+
+      const hBox2 = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
+      hBox2.add(uiSchemaLayout, {
+        flex: 1
+      });
+      hBox2.add(formDataLayout, {
         flex: 1
       });
 
       const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
-      jsonsLayout.add(jsonSchemaLayout, {
+      jsonsLayout.add(hBox, {
         flex: 1
       });
-      jsonsLayout.add(hBox, {
+      jsonsLayout.add(hBox2, {
         flex: 1
       });
 
@@ -187,10 +199,13 @@ qx.Class.define("json2form.Application", {
       this.__jsonSchema.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
+        const valueCopy = json2form.DataUtils.deepCloneObject(value);
         this.__formTitle.setValue("<b>" + value["title"] + "<b>");
         this.__formDescription.setValue(value["description"]);
         this.__form.setJsonSchema(value["properties"]);
-        // this.__tree.setJsonSchema(json2form.FakeData.fakeJsonSchemaTree());
+        const newFormat = json2form.DataUtils.propObj2PropArray(valueCopy);
+        this.__jsonSchema2.setValue(json2form.DataUtils.stringify(newFormat));
+        this.__tree.setJsonSchema(newFormat);
       });
       this.__uiSchema.addListener("changeValue", e => {
         const data = e.getData();

@@ -144,19 +144,6 @@ qx.Class.define("json2form.FakeData", {
         }
       });
     },
-    fakeJsonSchemaTree: function() {
-      return json2form.DataUtils.stringify({
-        "type": "object",
-        "children": [{
-          "label": "Block",
-          "type": "string"
-        }, {
-          "label": "visible",
-          "type": "boolean",
-          "default": true
-        }]
-      });
-    },
 
     fakeUiSchema: function() {
       return json2form.DataUtils.stringify({
