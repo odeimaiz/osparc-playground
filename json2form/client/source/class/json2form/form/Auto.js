@@ -322,9 +322,6 @@ qx.Class.define("json2form.form.Auto", {
       if (control === undefined) {
         return;
       }
-
-      let option = {}; // could use this to pass on info to the form renderer
-      this.add(control, s.title ? this["tr"](s.title):null, null, key, null, option);
       setup.call(this, s, key, control);
 
       if (s.set) {
@@ -341,6 +338,9 @@ qx.Class.define("json2form.form.Auto", {
       }
       control.key = key;
       control.description = s.description;
+
+      let option = {}; // could use this to pass on info to the form renderer
+      this.add(control, s.title ? this["tr"](s.title):null, null, key, null, option);
       this.__ctrlMap[key] = control;
     },
 
