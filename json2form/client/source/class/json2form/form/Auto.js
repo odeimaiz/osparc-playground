@@ -311,10 +311,6 @@ qx.Class.define("json2form.form.Auto", {
           });
           setup = this.__setupArraySpinner;
           break;
-        case "Group":
-          // control = new json2form.form.Group();
-          setup = this.__setupGroup;
-          break;
         default:
           console.error("unknown widget type " + s.type);
           break;
