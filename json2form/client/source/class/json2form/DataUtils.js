@@ -72,7 +72,14 @@ qx.Class.define("json2form.DataUtils", {
         if (typeof data[key] === "object") {
           constData[key] = {};
           const dataCopy = json2form.DataUtils.deepCloneObject(data[key]);
-          constData[key]["properties"] = json2form.DataUtils.uiSchema2PropObj(data[key]["properties"], dataCopy);
+          const moreProps = Object.values(dataCopy).some(elem => {
+            return typeof elem === "object"
+          });
+          if (moreProps) {
+            constData[key]["properties"] = json2form.DataUtils.uiSchema2PropObj(data[key]["properties"], dataCopy);
+          } else {
+            constData[key] = json2form.DataUtils.uiSchema2PropObj(data[key]["properties"], dataCopy);
+          }
         } else {
           constData = json2form.DataUtils.deepCloneObject(data);
         }
