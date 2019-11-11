@@ -29,7 +29,7 @@ qx.Class.define("json2form.Application", {
     __jsonSchema: null,
     __uiSchema: null,
     __formData: null,
-    __jsonSchema2: null,
+    __jsonSchemaForTree: null,
     __form: null,
     __tree: null,
 
@@ -88,8 +88,8 @@ qx.Class.define("json2form.Application", {
       const jsonSchemaLayout = this.__buildJsonLayout("JSONSchema");
       this.__jsonSchema = jsonSchemaLayout.getChildren()[1];
 
-      const jsonSchemaLayout2 = this.__buildJsonLayout("JSONSchema2");
-      this.__jsonSchema2 = jsonSchemaLayout2.getChildren()[1];
+      const jsonSchemaLayoutForTree = this.__buildJsonLayout("JSONSchemaForTree");
+      this.__jsonSchemaForTree = jsonSchemaLayoutForTree.getChildren()[1];
 
       const uiSchemaLayout = this.__buildJsonLayout("UISchema");
       this.__uiSchema = uiSchemaLayout.getChildren()[1];
@@ -101,7 +101,7 @@ qx.Class.define("json2form.Application", {
       hBox.add(jsonSchemaLayout, {
         flex: 1
       });
-      hBox.add(jsonSchemaLayout2, {
+      hBox.add(jsonSchemaLayoutForTree, {
         flex: 1
       });
 
@@ -194,7 +194,7 @@ qx.Class.define("json2form.Application", {
         const firstFormKey = Object.keys(value["properties"])[0];
         this.__form.setJsonSchema(value["properties"][firstFormKey]["properties"]);
         const newFormat = json2form.DataUtils.propObj2PropArray(valueCopy);
-        this.__jsonSchema2.setValue(json2form.DataUtils.stringify(newFormat));
+        this.__jsonSchemaForTree.setValue(json2form.DataUtils.stringify(newFormat));
         this.__tree.setJsonSchema(newFormat);
       });
       this.__uiSchema.addListener("changeValue", e => {
