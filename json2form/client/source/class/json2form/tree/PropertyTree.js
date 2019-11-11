@@ -50,21 +50,11 @@ qx.Class.define("json2form.tree.PropertyTree", {
   },
 
   properties: {
-    jsonSchema: {
+    mergedData: {
       check: "Object",
       init: {},
-      event: "changeJsonSchema",
+      event: "changeMergedData",
       apply: "__populateTree"
-    },
-    uiSchema: {
-      check: "Object",
-      init: {},
-      event: "changeUiSchema"
-    },
-    formData: {
-      check: "Object",
-      init: {},
-      event: "changeFormData"
     }
   },
 

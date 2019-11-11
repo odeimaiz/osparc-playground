@@ -28,12 +28,17 @@ qx.Class.define("json2form.DataUtils", {
       return JSON.parse(JSON.stringify(data));
     },
 
-    addRootKey2Obj: function(data) {
-      const rootData = {
+    getRootObj: function() {
+      const rootObj = {
         key: "root",
         type: "object",
         properties: {}
-      }
+      };
+      return rootObj;
+    },
+
+    addRootKey2Obj: function(data) {
+      const rootData = json2form.DataUtils.getRootObj();
       for (const key in data) {
         rootData.properties[key] = json2form.DataUtils.deepCloneObject(data[key]);
       }

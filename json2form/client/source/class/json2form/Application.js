@@ -26,11 +26,14 @@ qx.Class.define("json2form.Application", {
 
   members :
   {
-    __jsonSchema: null,
-    __uiSchema: null,
-    __formData: null,
-    __jsonSchemaForTree: null,
-    __form: null,
+    __jsonSchemaSrc: null,
+    __uiSchemaSrc: null,
+    __formDataSrc: null,
+    __jsonSchemaMod: null,
+    __uiSchemaMod: null,
+    __formDataMod: null,
+    __mergedForTree: null,
+    __mergedSchema: null,
     __tree: null,
 
     /**
@@ -47,6 +50,8 @@ qx.Class.define("json2form.Application", {
         qx.log.appender.Native;
       }
 
+      this.__mergedSchema = json2form.DataUtils.getRootObj();
+
       this.__buildLayout();
       this.__bindElements();
 
@@ -59,20 +64,18 @@ qx.Class.define("json2form.Application", {
       const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(20, null, "separator-horizontal"));
 
       const jsonsPanel = this.__buildJsons();
-      const propsWidget = this.__buildForm();
-      const footer = this.__buildFooter();
+      const propsWidget = this.__buildTree();
 
       hBox.add(jsonsPanel, {
-        width: "60%"
+        width: "75%"
       });
       hBox.add(propsWidget, {
-        width: "40%"
+        width: "25%"
       });
 
       vBox.add(hBox, {
         flex: 1
       });
-      vBox.add(footer);
 
       const doc = this.getRoot();
       const padding = 20;
@@ -85,65 +88,77 @@ qx.Class.define("json2form.Application", {
     },
 
     __buildJsons: function() {
-      const jsonSchemaLayout = this.__buildJsonLayout("JSONSchema");
-      this.__jsonSchema = jsonSchemaLayout.getChildren()[1];
+      const jsonSchemaSrcLayout = this.__buildJsonLayout("JSONSchemaSrc");
+      this.__jsonSchemaSrc = jsonSchemaSrcLayout.getChildren()[1];
 
-      const jsonSchemaLayoutForTree = this.__buildJsonLayout("JSONSchemaForTree");
-      this.__jsonSchemaForTree = jsonSchemaLayoutForTree.getChildren()[1];
+      const uiSchemaSrcLayout = this.__buildJsonLayout("UISchemaSrc");
+      this.__uiSchemaSrc = uiSchemaSrcLayout.getChildren()[1];
 
-      const uiSchemaLayout = this.__buildJsonLayout("UISchema");
-      this.__uiSchema = uiSchemaLayout.getChildren()[1];
+      const formDataSrcLayout = this.__buildJsonLayout("formDataSrc");
+      this.__formDataSrc = formDataSrcLayout.getChildren()[1];
 
-      const formDataLayout = this.__buildJsonLayout("formData");
-      this.__formData = formDataLayout.getChildren()[1];
-
-      const hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
-      hBox.add(jsonSchemaLayout, {
+      const vBoxSrc = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
+      vBoxSrc.add(jsonSchemaSrcLayout, {
         flex: 1
       });
-      hBox.add(jsonSchemaLayoutForTree, {
+      vBoxSrc.add(uiSchemaSrcLayout, {
         flex: 1
       });
-
-      const hBox2 = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
-      hBox2.add(uiSchemaLayout, {
-        flex: 1
-      });
-      hBox2.add(formDataLayout, {
+      vBoxSrc.add(formDataSrcLayout, {
         flex: 1
       });
 
-      const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
-      jsonsLayout.add(hBox, {
+
+      const jsonSchemaModLayout = this.__buildJsonLayout("JSONSchemaMod");
+      this.__jsonSchemaMod = jsonSchemaModLayout.getChildren()[1];
+
+      const uiSchemaModLayout = this.__buildJsonLayout("UISchemaMod");
+      this.__uiSchemaMod = uiSchemaModLayout.getChildren()[1];
+
+      const formDataModLayout = this.__buildJsonLayout("formDataMod");
+      this.__formDataMod = formDataModLayout.getChildren()[1];
+
+      const vBoxMod = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
+      vBoxMod.add(jsonSchemaModLayout, {
         flex: 1
       });
-      jsonsLayout.add(hBox2, {
+      vBoxMod.add(uiSchemaModLayout, {
+        flex: 1
+      });
+      vBoxMod.add(formDataModLayout, {
+        flex: 1
+      });
+
+
+      const mergedForTree = this.__buildJsonLayout("MergedForTree");
+      this.__mergedForTree = mergedForTree.getChildren()[1];
+
+      const vBoxMerged = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
+      vBoxMerged.add(mergedForTree, {
+        flex: 1
+      });
+
+      const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
+      jsonsLayout.add(vBoxSrc, {
+        flex: 1
+      });
+      jsonsLayout.add(vBoxMod, {
+        flex: 1
+      });
+      jsonsLayout.add(vBoxMerged, {
         flex: 1
       });
 
       return jsonsLayout;
     },
 
-    __buildForm: function() {
+    __buildTree: function() {
       const formLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
-
-      const form = this.__form = new json2form.form.Auto();
-      const propsWidget = new json2form.form.renderer.PropForm(form);
-      formLayout.add(propsWidget, {
-        flex: 1
-      });
-      form.addListener("changeData", e => {
-        const data = e.getData();
-        console.log("Data changed", data);
-        this.__formData.setValue(json2form.DataUtils.stringify(data));
-      }, this);
-
 
       const tree = this.__tree = new json2form.tree.PropertyTree();
       formLayout.add(tree, {
         flex: 1
       });
-
 
       return formLayout;
     },
@@ -164,57 +179,43 @@ qx.Class.define("json2form.Application", {
       return vBox;
     },
 
-    __buildFooter: function() {
-      return new json2form.LinkButton("Powered by qooxdoo-json2form", "https://github.com/odeimaiz/osparc-playground");
-    },
-
     __bindElements: function() {
-      /*
-      this.__jsonSchema.bind("value", this.__form, "jsonSchema", {
-        converter: textValue => {
-          return JSON.parse(textValue);
-        }
-      });
-      this.__uiSchema.bind("value", this.__form, "uiSchema", {
-        converter: textValue => {
-          return JSON.parse(textValue);
-        }
-      });
-      this.__formData.bind("value", this.__form, "formData", {
-        converter: textValue => {
-          return JSON.parse(textValue);
-        }
-      });
-      */
-      this.__jsonSchema.addListener("changeValue", e => {
+      this.__jsonSchemaSrc.addListener("changeValue", e => {
         const data = e.getData();
         let value = JSON.parse(data);
         value = json2form.DataUtils.addRootKey2Obj(value);
         const valueCopy = json2form.DataUtils.deepCloneObject(value);
-        const firstFormKey = Object.keys(value["properties"])[0];
-        this.__form.setJsonSchema(value["properties"][firstFormKey]["properties"]);
         const newFormat = json2form.DataUtils.propObj2PropArray(valueCopy);
-        this.__jsonSchemaForTree.setValue(json2form.DataUtils.stringify(newFormat));
-        this.__tree.setJsonSchema(newFormat);
+        this.__jsonSchemaMod.setValue(json2form.DataUtils.stringify(newFormat));
       });
-      this.__uiSchema.addListener("changeValue", e => {
+      this.__uiSchemaSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        this.__form.setUiSchema(value);
-        this.__tree.setUiSchema(value);
+        console.log(value);
       });
-      this.__formData.addListener("changeValue", e => {
+      this.__formDataSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        this.__form.setFormData(value);
-        this.__tree.setFormData(value);
+        console.log(value);
+      });
+      
+      this.__jsonSchemaMod.addListener("changeValue", e => {
+        const data = e.getData();
+        const value = JSON.parse(data);
+        this.__mergedForTree.setValue(json2form.DataUtils.stringify(value));
+      });
+
+      this.__mergedForTree.addListener("changeValue", e => {
+        const data = e.getData();
+        const value = JSON.parse(data);
+        this.__tree.setMergedData(value);
       });
     },
 
     __populateWithfake: function() {
-      this.__jsonSchema.setValue(json2form.FakeData.fakeJsonSchema());
-      this.__uiSchema.setValue(json2form.FakeData.fakeUiSchema());
-      this.__formData.setValue(json2form.FakeData.fakeFormData());
+      this.__jsonSchemaSrc.setValue(json2form.FakeData.fakeJsonSchema());
+      this.__uiSchemaSrc.setValue(json2form.FakeData.fakeUiSchema());
+      this.__formDataSrc.setValue(json2form.FakeData.fakeFormData());
     }
   }
 });
