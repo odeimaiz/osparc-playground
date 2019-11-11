@@ -22,166 +22,258 @@ qx.Class.define("json2form.FakeData", {
   statics: {
     fakeJsonSchema: function() {
       return json2form.DataUtils.stringify({
-        "$id": "https://osparc.io/schemas/data-schema.json",
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "Selected Entity Properties",
-        "description": "A form for entities",
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "visible": {
-            "type": "boolean",
-            "default": true
-          },
-          "color": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 256
+        "Block 1": {
+          "title": "Block 1",
+          "readOnly": false,
+          "type": "object",
+          "properties": {
+            "Name": {
+              "title": "Name",
+              "readOnly": false,
+              "type": "string"
             },
-            "minItems": 3,
-            "maxItems": 3
-          },
-          "opacity": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 100
-          },
-          "transformation": {
-            "title": "Transformation",
-            "type": "object",
-            "properties": {
-              "rotation": {
-                "type": "object",
-                "properties": {
-                  "value": {
-                    "type": "array",
-                    "items": {
-                      "type": "number"
-                    },
-                    "minItems": 3,
-                    "maxItems": 3
-                  },
-                  "unit": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "value"
-                ]
-              },
-              "translation": {
-                "type": "object",
-                "properties": {
-                  "value": {
-                    "type": "array",
-                    "items": {
-                      "type": "number"
-                    },
-                    "minItems": 3,
-                    "maxItems": 3
-                  },
-                  "unit": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "value"
-                ]
-              }
-            }
-          },
-          "parameters": {
-            "type": "object",
-            "title": "Parameters",
-            "properties": {
-            "radius": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "number"
-                },
-                "unit": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "value"
-              ]
-            },
-            "height": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "number"
-                },
-                "unit": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "value"
-              ]
-            },
-            "centered": {
+            "Visible": {
+              "title": "Visible",
+              "readOnly": false,
               "type": "boolean",
               "default": false
+            },
+            "Color": {
+              "title": "Color",
+              "readOnly": false,
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "Opacity": {
+              "title": "Opacity",
+              "readOnly": false,
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "unit": {
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "required": [
+                "value"
+              ]
+            },
+            "Transformation": {
+              "readOnly": false,
+              "type": "object",
+              "properties": {
+                "Scaling": {
+                  "title": "Scaling",
+                  "readOnly": false,
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    },
+                    "unit": {
+                      "type": "string",
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ]
+                },
+                "Rotation": {
+                  "title": "Rotation",
+                  "description": "Euler angles",
+                  "readOnly": false,
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    },
+                    "unit": {
+                      "type": "string",
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ]
+                },
+                "Translation": {
+                  "title": "Translation",
+                  "description": "x, y, z",
+                  "readOnly": false,
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    },
+                    "unit": {
+                      "type": "string",
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ]
+                }
+              }
+            },
+            "Parameters": {
+              "title": "Block",
+              "readOnly": false,
+              "type": "object",
+              "properties": {
+                "SizeX": {
+                  "title": "Size X",
+                  "readOnly": false,
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "minimum": -1.7976931348623157e+308,
+                      "maximum": 1.7976931348623157e+308
+                    },
+                    "unit": {
+                      "type": "string",
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ]
+                },
+                "SizeY": {
+                  "title": "Size Y",
+                  "readOnly": false,
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "minimum": -1.7976931348623157e+308,
+                      "maximum": 1.7976931348623157e+308
+                    },
+                    "unit": {
+                      "type": "string",
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ]
+                },
+                "SizeZ": {
+                  "title": "Size Z",
+                  "readOnly": false,
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "minimum": -1.7976931348623157e+308,
+                      "maximum": 1.7976931348623157e+308
+                    },
+                    "unit": {
+                      "type": "string",
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ]
+                },
+                "Centered": {
+                  "title": "Centered",
+                  "readOnly": false,
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            },
+            "Material": {
+              "title": "Material",
+              "readOnly": false,
+              "type": "object",
+              "properties": {
+                "Assign": {
+                  "title": "Material Name",
+                  "readOnly": false,
+                  "type": "unknown"
+                }
+              }
             }
           }
-        },
-        "materials": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
         }
       });
     },
 
     fakeUiSchema: function() {
       return json2form.DataUtils.stringify({
-        "name": {
-          "ui:widget": "textarea",
-          "ui:autofocus": true
-        },
-        "visible": {
-          "ui:icon": "https://img.icons8.com/ios/50/000000/visible.png"
-        },
-        "color": {
-          "ui:widget": "colorpicker"
-        },
-        "opacity": {
-          "ui:widget": "range"
-        },
-        "transformation": {
-          "rotation": {
-            "value": {
-              "ui:widget": "field"
+        "Block 1": {
+          "Name": {
+            "ui:widget": "textarea"
+          },
+          "Visible": {
+            "ui:icon": "icons/XModelerUI/visibility.ico",
+            "ui:widget": "checkbox"
+          },
+          "Color": {
+            "ui:widget": "colorpicker"
+          },
+          "Opacity": {
+            "ui:widget": "range"
+          },
+          "Transformation": {
+            "Scaling": {
+              "ui:widget": "quantity3"
             },
-            "unit": {
-              "ui:widget": "field"
+            "Rotation": {
+              "ui:widget": "quantity3"
+            },
+            "Translation": {
+              "ui:widget": "quantity3"
             }
           },
-          "translation": {
-            "ui:widget": "quantity3"
-          }
-        },
-        "parameters": {
-          "radius": {
-            "ui:widget": "quantity"
+          "Parameters": {
+            "ui:icon": "icons/XModelerUI/create_solidblock.ico",
+            "SizeX": {
+              "ui:widget": "quantity"
+            },
+            "SizeY": {
+              "ui:widget": "quantity"
+            },
+            "SizeZ": {
+              "ui:widget": "quantity"
+            },
+            "Centered": {
+              "ui:widget": "checkbox"
+            }
           },
-          "height": {
-            "ui:widget": "quantity"
-          },
-          "centered": {
-            "ui:widget": "radio"
+          "Material": {
+            "Assign": {}
           }
         }
       });
@@ -189,124 +281,63 @@ qx.Class.define("json2form.FakeData", {
 
     fakeFormData: function() {
       return json2form.DataUtils.stringify({
-        "name": "Red Cylinder",
-        "visible": true,
-        "color": [
-          248,
-          6,
-          143
-        ],
-        "opacity": 100,
-        "transformation": {
-          "rotation": {
-            "value": [
-              0,
-              0,
-              0
-            ],
-            "unit": "deg"
+        "Block 1": {
+          "Name": "Block 1",
+          "Visible": true,
+          "Color": [
+            0.9725490808486938,
+            0.02352941408753395,
+            0.5607843399047852,
+            1
+          ],
+          "Opacity": {
+            "value": 100
           },
-          "translation": {
-            "value": [
-              100,
-              0,
-              0
-            ],
-            "unit": "mm"
-          }
-        },
-        "parameters": {
-          "radius": {
-            "value": 19.1055,
-            "unit": "mm"
+          "Transformation": {
+            "Scaling": {
+              "value": [
+                1,
+                1,
+                1
+              ],
+              "unit": ""
+            },
+            "Rotation": {
+              "value": [
+                0,
+                0,
+                0
+              ],
+              "unit": "deg"
+            },
+            "Translation": {
+              "value": [
+                -52,
+                46,
+                0
+              ],
+              "unit": "mm"
+            }
           },
-          "height": {
-            "value": 43,
-            "unit": "mm"
+          "Parameters": {
+            "SizeX": {
+              "value": 33,
+              "unit": "mm"
+            },
+            "SizeY": {
+              "value": -30,
+              "unit": "mm"
+            },
+            "SizeZ": {
+              "value": 38,
+              "unit": "mm"
+            },
+            "Centered": false
           },
-          "centered": false
-        },
-        "materials": []
-      });
-    },
-
-    fakeJsonSchema2: function() {
-      return json2form.DataUtils.stringify({
-        "title": "A registration form",
-        "description": "A simple form example.",
-        "type": "object",
-        "required": [
-          "firstName",
-          "lastName"
-        ],
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "title": "First name",
-            "default": "Chuck"
-          },
-          "lastName": {
-            "type": "string",
-            "title": "Last name"
-          },
-          "age": {
-            "type": "integer",
-            "title": "Age"
-          },
-          "bio": {
-            "type": "string",
-            "title": "Bio"
-          },
-          "password": {
-            "type": "string",
-            "title": "Password",
-            "minLength": 3
-          },
-          "telephone": {
-            "type": "string",
-            "title": "Telephone",
-            "minLength": 10
+          "Material": {
+            "Assign": {}
           }
         }
-      });
-    },
-
-    fakeUiSchema2: function() {
-      return json2form.DataUtils.stringify({
-        "firstName": {
-          "ui:autofocus": true,
-          "ui:emptyValue": ""
-        },
-        "age": {
-          "ui:widget": "updown",
-          "ui:title": "Age of person",
-          "ui:description": "(earthian year)"
-        },
-        "bio": {
-          "ui:widget": "textarea"
-        },
-        "password": {
-          "ui:widget": "password",
-          "ui:help": "Hint: Make it strong!"
-        },
-        "date": {
-          "ui:widget": "alt-datetime"
-        },
-        "telephone": {
-          "ui:options": {
-            "inputType": "tel"
-          }
-        }
-      });
-    },
-
-    fakeFormData2: function() {
-      return json2form.DataUtils.stringify({
-        "firstName": "Chuck",
-        "lastName": "Norris",
-        "age": 75,
-        "bio": "Roundhouse kicking asses since 1940",
-        "password": "noneed"
       });
     }
   }
