@@ -37,6 +37,8 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
 
   construct: function() {
     this.base(arguments);
+
+    this.setIndent(10);
   },
 
   properties: {
