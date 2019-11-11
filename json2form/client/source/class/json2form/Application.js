@@ -182,10 +182,9 @@ qx.Class.define("json2form.Application", {
     __bindElements: function() {
       this.__jsonSchemaSrc.addListener("changeValue", e => {
         const data = e.getData();
-        let value = JSON.parse(data);
-        value = json2form.DataUtils.addRootKey2Obj(value);
-        const valueCopy = json2form.DataUtils.deepCloneObject(value);
-        const newFormat = json2form.DataUtils.propObj2PropArray(valueCopy);
+        const value = JSON.parse(data);
+        const valueWRoot = json2form.DataUtils.addRootKey2Obj(value);
+        const newFormat = json2form.DataUtils.propObj2PropArray(valueWRoot);
         this.__jsonSchemaMod.setValue(json2form.DataUtils.stringify(newFormat));
       });
       this.__uiSchemaSrc.addListener("changeValue", e => {
