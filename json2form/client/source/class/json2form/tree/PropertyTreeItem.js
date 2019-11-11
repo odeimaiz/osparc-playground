@@ -38,7 +38,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
   construct: function() {
     this.base(arguments);
 
-    this.setIndent(10);
+    this.setIndent(11);
   },
 
   properties: {
@@ -73,6 +73,14 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
 
     __applyType: function(value, old) {
       console.log("type", value);
+
+      const oldControl = this.getFormEntry();
+      const children = this._getChildren();
+      for (let i=0; i<children.length; i++) {
+        if (oldControl === children[i]) {
+          this._remove(oldControl);
+        }
+      }
 
       if (value !== "object") {
         const control = this.__getField(this.getType());
