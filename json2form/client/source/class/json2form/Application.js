@@ -199,12 +199,21 @@ qx.Class.define("json2form.Application", {
         const data = e.getData();
         const value = JSON.parse(data);
         console.log(value);
+        // const valueObj = json2form.DataUtils.formData2PropObj(null, value);
+        // const valueWRoot = json2form.DataUtils.addRootKey2Obj(valueObj);
+        // const newFormat = json2form.DataUtils.jsonSchema2PropArray(valueWRoot);
+        // this.__formDataMod.setValue(json2form.DataUtils.stringify(valueWRoot));
       });
-      
+
       this.__jsonSchemaMod.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
         this.__mergedForTree.setValue(json2form.DataUtils.stringify(value));
+      });
+      this.__uiSchemaMod.addListener("changeValue", e => {
+        const data = e.getData();
+        const value = JSON.parse(data);
+        console.log(value);
       });
 
       this.__mergedForTree.addListener("changeValue", e => {
