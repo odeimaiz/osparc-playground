@@ -184,13 +184,16 @@ qx.Class.define("json2form.Application", {
         const data = e.getData();
         const value = JSON.parse(data);
         const valueWRoot = json2form.DataUtils.addRootKey2Obj(value);
-        const newFormat = json2form.DataUtils.propObj2PropArray(valueWRoot);
+        const newFormat = json2form.DataUtils.jsonSchema2PropArray(valueWRoot);
         this.__jsonSchemaMod.setValue(json2form.DataUtils.stringify(newFormat));
       });
       this.__uiSchemaSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        console.log(value);
+        const valueObj = json2form.DataUtils.uiSchema2PropObj(null, value);
+        const valueWRoot = json2form.DataUtils.addRootKey2Obj(valueObj);
+        // const newFormat = json2form.DataUtils.jsonSchema2PropArray(valueWRoot);
+        this.__uiSchemaMod.setValue(json2form.DataUtils.stringify(valueWRoot));
       });
       this.__formDataSrc.addListener("changeValue", e => {
         const data = e.getData();

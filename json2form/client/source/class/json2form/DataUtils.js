@@ -45,7 +45,7 @@ qx.Class.define("json2form.DataUtils", {
       return rootData;
     },
 
-    propObj2PropArray: function(data) {
+    jsonSchema2PropArray: function(data) {
       let constData = {};
       for (const key in data) {
         if (key === "properties" && typeof data["properties"] === 'object') {
@@ -55,12 +55,26 @@ qx.Class.define("json2form.DataUtils", {
             let prop = {};
             prop["key"] = ("key" in propObj) ? propObj["key"] : propKey;
             prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
-            const moreProps = json2form.DataUtils.propObj2PropArray(propObj);
+            const moreProps = json2form.DataUtils.jsonSchema2PropArray(propObj);
             prop = Object.assign(prop, moreProps);
             constData["properties"].push(prop);
           }
         } else {
           constData[key] = json2form.DataUtils.deepCloneObject(data[key]);
+        }
+      }
+      return constData;
+    },
+
+    uiSchema2PropObj: function(parentObj, data) {
+      let constData = parentObj ? parentObj : {};
+      for (const key in data) {
+        if (typeof data[key] === "object") {
+          constData[key] = {};
+          const dataCopy = json2form.DataUtils.deepCloneObject(data[key]);
+          constData[key]["properties"] = json2form.DataUtils.uiSchema2PropObj(data[key]["properties"], dataCopy);
+        } else {
+          constData = json2form.DataUtils.deepCloneObject(data);
         }
       }
       return constData;
