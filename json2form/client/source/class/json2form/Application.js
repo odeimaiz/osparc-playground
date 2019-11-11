@@ -30,8 +30,6 @@ qx.Class.define("json2form.Application", {
     __uiSchema: null,
     __formData: null,
     __jsonSchema2: null,
-    __formTitle: null,
-    __formDescription: null,
     __form: null,
     __tree: null,
 
@@ -129,14 +127,6 @@ qx.Class.define("json2form.Application", {
     __buildForm: function() {
       const formLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
 
-      const formTitle = this.__formTitle = new qx.ui.basic.Label().set({
-        rich: true
-      });
-      formLayout.add(formTitle);
-
-      const formDesc = this.__formDescription = new qx.ui.basic.Label();
-      formLayout.add(formDesc);
-
       const form = this.__form = new json2form.form.Auto();
       const propsWidget = new json2form.form.renderer.PropForm(form);
       formLayout.add(propsWidget, {
@@ -200,8 +190,6 @@ qx.Class.define("json2form.Application", {
         const data = e.getData();
         const value = JSON.parse(data);
         const valueCopy = json2form.DataUtils.deepCloneObject(value);
-        this.__formTitle.setValue("<b>" + value["title"] + "<b>");
-        this.__formDescription.setValue(value["description"]);
         this.__form.setJsonSchema(value["properties"]);
         const newFormat = json2form.DataUtils.propObj2PropArray(valueCopy);
         this.__jsonSchema2.setValue(json2form.DataUtils.stringify(newFormat));
