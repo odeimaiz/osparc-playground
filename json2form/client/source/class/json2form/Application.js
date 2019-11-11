@@ -188,9 +188,11 @@ qx.Class.define("json2form.Application", {
       */
       this.__jsonSchema.addListener("changeValue", e => {
         const data = e.getData();
-        const value = JSON.parse(data);
+        let value = JSON.parse(data);
+        value = json2form.DataUtils.addRootKey2Obj(value);
         const valueCopy = json2form.DataUtils.deepCloneObject(value);
-        this.__form.setJsonSchema(value["properties"]);
+        const firstFormKey = Object.keys(value["properties"])[0];
+        this.__form.setJsonSchema(value["properties"][firstFormKey]["properties"]);
         const newFormat = json2form.DataUtils.propObj2PropArray(valueCopy);
         this.__jsonSchema2.setValue(json2form.DataUtils.stringify(newFormat));
         this.__tree.setJsonSchema(newFormat);

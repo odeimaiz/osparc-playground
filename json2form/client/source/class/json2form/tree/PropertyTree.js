@@ -35,6 +35,10 @@ qx.Class.define("json2form.tree.PropertyTree", {
   construct: function() {
     this.base(arguments, null, "title", "properties");
 
+    this.set({
+      hideRoot: true
+    })
+
     this.setDelegate({
       createItem: () => new json2form.tree.PropertyTreeItem(),
       bindItem: (c, item, id) => {
