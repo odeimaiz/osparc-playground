@@ -38,7 +38,10 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
   construct: function() {
     this.base(arguments);
 
-    this.setIndent(11);
+    this.set({
+      open: true,
+      indent: 11
+    });
   },
 
   properties: {

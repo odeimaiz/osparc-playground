@@ -54,6 +54,7 @@ qx.Class.define("json2form.DataUtils", {
             const propObj = data["properties"][propKey];
             let prop = {};
             prop["key"] = ("key" in propObj) ? propObj["key"] : propKey;
+            // prop["key"] = (json2form.DataUtils.isObject(propObj) && "key" in propObj) ? propObj["key"] : propKey;
             prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
             const moreProps = json2form.DataUtils.jsonSchema2PropArray(propObj);
             prop = Object.assign(prop, moreProps);
@@ -66,16 +67,18 @@ qx.Class.define("json2form.DataUtils", {
       return constData;
     },
 
+    isObject: function (value) {
+      return value && typeof value === 'object' && value.constructor === Object;
+    },
+
     uiSchema2PropObj: function(parentObj, data) {
       let constData = parentObj ? parentObj : {};
       for (const key in data) {
         if (typeof data[key] === "object") {
           constData[key] = {};
           const dataCopy = json2form.DataUtils.deepCloneObject(data[key]);
-          const moreProps = Object.values(dataCopy).some(elem => {
-            return typeof elem === "object"
-          });
-          if (moreProps) {
+          const hasChildren = Object.values(dataCopy).some(json2form.DataUtils.isObject);
+          if (hasChildren) {
             constData[key]["properties"] = json2form.DataUtils.uiSchema2PropObj(data[key]["properties"], dataCopy);
           } else {
             constData[key] = json2form.DataUtils.uiSchema2PropObj(data[key]["properties"], dataCopy);
@@ -85,6 +88,28 @@ qx.Class.define("json2form.DataUtils", {
         }
       }
       return constData;
-    }
+    },
+
+    formData2PropObj: function(parentObj, data) {
+      let constData = parentObj ? parentObj : {};
+      for (const key in data) {
+        if (typeof data[key] === "object") {
+          constData[key] = {};
+          const dataCopy = json2form.DataUtils.deepCloneObject(data[key]);
+          let hasChildren = json2form.DataUtils.isObject(dataCopy);
+          if (hasChildren) {
+            hasChildren = Object.values(dataCopy).some(json2form.DataUtils.isObject);
+          }
+          if (hasChildren) {
+            constData[key]["properties"] = json2form.DataUtils.formData2PropObj(data[key]["properties"], dataCopy);
+          } else {
+            constData[key]["value"] = json2form.DataUtils.formData2PropObj(data[key]["properties"], dataCopy);
+          }
+        } else {
+          constData = json2form.DataUtils.deepCloneObject(data);
+        }
+      }
+      return constData;
+    },
   }
 });
