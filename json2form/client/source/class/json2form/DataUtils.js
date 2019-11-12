@@ -74,7 +74,7 @@ qx.Class.define("json2form.DataUtils", {
       const deepMerge = json2form.wrapper.DeepMerge.getInstance();
       let constData = parentObj ? parentObj : {};
       for (const key in data) {
-        if (typeof data[key] === "object") {
+        if (json2form.DataUtils.isObject(data[key])) {
           constData[key] = {};
           const dataCopy = json2form.DataUtils.deepCloneObject(data[key]);
           let wChildren = {};
@@ -100,22 +100,31 @@ qx.Class.define("json2form.DataUtils", {
     },
 
     formData2PropObj: function(parentObj, data) {
+      const deepMerge = json2form.wrapper.DeepMerge.getInstance();
       let constData = parentObj ? parentObj : {};
       for (const key in data) {
-        if (typeof data[key] === "object") {
+        if (json2form.DataUtils.isObject(data[key])) {
           constData[key] = {};
           const dataCopy = json2form.DataUtils.deepCloneObject(data[key]);
-          let hasChildren = json2form.DataUtils.isObject(dataCopy);
-          if (hasChildren) {
-            hasChildren = Object.values(dataCopy).some(json2form.DataUtils.isObject);
+          let wChildren = {};
+          let woChildren = {};
+          for (const keyC in dataCopy) {
+            if (keyC.includes("ui:")) {
+              woChildren[keyC.replace("ui:", "ui_")] = dataCopy[keyC];
+            } else {
+              wChildren[keyC] = dataCopy[keyC];
+            }
           }
-          if (hasChildren) {
-            constData[key]["properties"] = json2form.DataUtils.formData2PropObj(data[key]["properties"], dataCopy);
-          } else {
-            constData[key]["value"] = json2form.DataUtils.formData2PropObj(data[key]["properties"], dataCopy);
+          if (Object.entries(woChildren).length) {
+            constData[key] = deepMerge.mergeArrayOfObjs([constData[key], json2form.DataUtils.formData2PropObj(data[key]["properties"], woChildren)]);
+          }
+          if (Object.entries(wChildren).length) {
+            constData[key]["properties"] = json2form.DataUtils.formData2PropObj(data[key]["properties"], wChildren);
           }
         } else {
-          constData = json2form.DataUtils.deepCloneObject(data);
+          constData[key] = {
+            "value": data[key]
+          };
         }
       }
       return constData;

@@ -196,12 +196,14 @@ qx.Class.define("json2form.Application", {
       this.__formDataSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        console.log(value);
+        const valueObj = json2form.DataUtils.formData2PropObj(null, value);
+        this.__formDataMod.setValue(json2form.DataUtils.stringify(valueObj));
       });
 
       [
         this.__jsonSchemaMod,
-        this.__uiSchemaMod
+        this.__uiSchemaMod,
+        this.__formDataMod
       ].forEach(elemMod => {
         elemMod.addListener("changeValue", e => {
           const data = e.getData();
