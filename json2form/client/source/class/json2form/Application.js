@@ -50,6 +50,8 @@ qx.Class.define("json2form.Application", {
         qx.log.appender.Native;
       }
 
+      json2form.wrapper.DeepMerge.getInstance().init();
+
       this.__buildLayout();
       this.__bindElements();
 
@@ -178,6 +180,8 @@ qx.Class.define("json2form.Application", {
     },
 
     __bindElements: function() {
+      const deepMerge = json2form.wrapper.DeepMerge.getInstance();
+
       this.__jsonSchemaSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
