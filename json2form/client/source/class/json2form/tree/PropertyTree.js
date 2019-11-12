@@ -45,6 +45,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindDefaultProperties(item, id);
         c.bindProperty("key", "key", null, item, id);
         c.bindProperty("type", "type", null, item, id);
+        c.bindProperty("value", "value", null, item, id);
       }
     });
   },

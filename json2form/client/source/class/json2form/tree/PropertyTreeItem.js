@@ -39,7 +39,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     this.base(arguments);
 
     this.set({
-      open: true,
       indent: 11
     });
   },
@@ -54,6 +53,11 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       check: "String",
       apply: "__applyType",
       event: "changeType"
+    },
+
+    value: {
+      apply: "__applyValue",
+      event: "changeValue"
     },
 
     formEntry: {
@@ -89,6 +93,12 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
         const control = this.__getField(this.getType());
         this.setFormEntry(control);
         this.addWidget(this.getFormEntry());
+      }
+    },
+
+    __applyValue: function(value, old) {
+      if (this.getFormEntry()) {
+        this.getFormEntry().setValue(value);
       }
     },
 

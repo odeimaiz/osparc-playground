@@ -134,10 +134,18 @@ qx.Class.define("json2form.form.ArraySpinner", {
       if (typeof value === "number") {
         return value >= this.getMinimum() && value <= this.getMaximum();
       } else if (Array.isArray(value)) {
-        // return value.every(this._checkValue);
         let valid = true;
         for (let i=0; i<value.length && valid; i++) {
           valid = value[i] >= this.getMinimum() && value[i] <= this.getMaximum();
+        }
+        return valid;
+      } else if (value.classname === "qx.data.Array") {
+        const myArray = value.toArray();
+        const min = this.getMinimum();
+        const max = this.getMaximum();
+        let valid = true;
+        for (let i=0; i<myArray.length && valid; i++) {
+          valid = myArray[i] >= min && myArray[i] <= max;
         }
         return valid;
       }
@@ -149,7 +157,11 @@ qx.Class.define("json2form.form.ArraySpinner", {
       if (values !== null) {
         for (let i=0; i<values.length; i++) {
           if (i < this.__widgets.length) {
-            this.__widgets[i].setValue(values[i]);
+            if (values.classname === "qx.data.Array") {
+              this.__widgets[i].setValue(values.toArray()[i]);
+            } else {
+              this.__widgets[i].setValue(values[i]);
+            }
           }
         }
       }
