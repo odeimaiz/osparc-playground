@@ -48,7 +48,9 @@ qx.Class.define("json2form.wrapper.DeepMerge", {
       loader.start();
     },
 
-    mergeArrayOfObjs: function(arrayOfObjects, options = {}) {
+    mergeArrayOfObjs: function(arrayOfObjects) {
+      const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
+      const options = { arrayMerge: overwriteMerge };
       return deepmerge.all(arrayOfObjects, options);
     }
   }
