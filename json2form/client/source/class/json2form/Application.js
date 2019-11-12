@@ -185,15 +185,13 @@ qx.Class.define("json2form.Application", {
       this.__jsonSchemaSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        const valueWRoot = json2form.DataUtils.addRootKey2Obj(value);
-        this.__jsonSchemaMod.setValue(json2form.DataUtils.stringify(valueWRoot));
+        this.__jsonSchemaMod.setValue(json2form.DataUtils.stringify(value));
       });
       this.__uiSchemaSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
         const valueObj = json2form.DataUtils.uiSchema2PropObj(null, value);
-        const valueWRoot = json2form.DataUtils.addRootKey2Obj(valueObj);
-        this.__uiSchemaMod.setValue(json2form.DataUtils.stringify(valueWRoot));
+        this.__uiSchemaMod.setValue(json2form.DataUtils.stringify(valueObj));
       });
       this.__formDataSrc.addListener("changeValue", e => {
         const data = e.getData();
@@ -201,29 +199,26 @@ qx.Class.define("json2form.Application", {
         console.log(value);
       });
 
-      this.__jsonSchemaMod.addListener("changeValue", e => {
-        const data = e.getData();
-        let value = JSON.parse(data);
-        const oldVal = JSON.parse(this.__mergedSchemaMod.getValue());
-        if (oldVal) {
-          value = deepMerge.mergeArrayOfObjs([oldVal, value]);
-        }
-        this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(value));
-      });
-      this.__uiSchemaMod.addListener("changeValue", e => {
-        const data = e.getData();
-        let value = JSON.parse(data);
-        const oldVal = JSON.parse(this.__mergedSchemaMod.getValue());
-        if (oldVal) {
-          value = deepMerge.mergeArrayOfObjs([oldVal, value]);
-        }
-        this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(value));
+      [
+        this.__jsonSchemaMod,
+        this.__uiSchemaMod
+      ].forEach(elemMod => {
+        elemMod.addListener("changeValue", e => {
+          const data = e.getData();
+          let value = JSON.parse(data);
+          const oldVal = JSON.parse(this.__mergedSchemaMod.getValue());
+          if (oldVal) {
+            value = deepMerge.mergeArrayOfObjs([oldVal, value]);
+          }
+          this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(value));
+        });
       });
 
       this.__mergedSchemaMod.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        const newFormat = json2form.DataUtils.jsonSchema2PropArray(value);
+        const valueWRoot = json2form.DataUtils.addRootKey2Obj(value);
+        const newFormat = json2form.DataUtils.jsonSchema2PropArray(valueWRoot);
         this.__mergedForTree.setValue(json2form.DataUtils.stringify(newFormat));
       });
 
