@@ -54,7 +54,6 @@ qx.Class.define("json2form.DataUtils", {
             const propObj = data["properties"][propKey];
             let prop = {};
             prop["key"] = ("key" in propObj) ? propObj["key"] : propKey;
-            // prop["key"] = (json2form.DataUtils.isObject(propObj) && "key" in propObj) ? propObj["key"] : propKey;
             prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
             const moreProps = json2form.DataUtils.jsonSchema2PropArray(propObj);
             prop = Object.assign(prop, moreProps);
@@ -110,6 +109,6 @@ qx.Class.define("json2form.DataUtils", {
         }
       }
       return constData;
-    },
+    }
   }
 });
