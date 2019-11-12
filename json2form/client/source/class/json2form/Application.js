@@ -203,10 +203,21 @@ qx.Class.define("json2form.Application", {
 
       this.__jsonSchemaMod.addListener("changeValue", e => {
         const data = e.getData();
-        const value = JSON.parse(data);
-        const oldVal = JSON.parse(this.__mergedForTree.getValue());
-        const mergedValue = {...oldVal, ...value};
-        this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(mergedValue));
+        let value = JSON.parse(data);
+        const oldVal = JSON.parse(this.__mergedSchemaMod.getValue());
+        if (oldVal) {
+          value = deepMerge.mergeArrayOfObjs([oldVal, value]);
+        }
+        this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(value));
+      });
+      this.__uiSchemaMod.addListener("changeValue", e => {
+        const data = e.getData();
+        let value = JSON.parse(data);
+        const oldVal = JSON.parse(this.__mergedSchemaMod.getValue());
+        if (oldVal) {
+          value = deepMerge.mergeArrayOfObjs([oldVal, value]);
+        }
+        this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(value));
       });
 
       this.__mergedSchemaMod.addListener("changeValue", e => {
