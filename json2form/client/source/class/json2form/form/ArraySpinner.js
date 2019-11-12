@@ -89,10 +89,18 @@ qx.Class.define("json2form.form.ArraySpinner", {
   },
 
   members: {
+    getValue: function() {
+      const value = [];
+      for (let i=0; i<this.__widgets.length; i++) {
+        value.push(this.__widgets[i].getValue());
+      }
+      return value;
+    },
+
     // overridden
     _applyNItems: function(value, old) {
       for (let i=0; i<value; i++) {
-        const newWidget =  new qx.ui.form.Spinner(this.getMinimum(), this.getValue(), this.getMaximum());
+        const newWidget =  new qx.ui.form.Spinner(-1000, 0, 1000);
         this.addWidget(newWidget);
       }
     },

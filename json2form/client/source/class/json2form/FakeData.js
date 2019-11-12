@@ -291,7 +291,8 @@ qx.Class.define("json2form.FakeData", {
             1
           ],
           "Opacity": {
-            "value": 100
+            "value": 100,
+            "unit": ""
           },
           "Transformation": {
             "Scaling": {

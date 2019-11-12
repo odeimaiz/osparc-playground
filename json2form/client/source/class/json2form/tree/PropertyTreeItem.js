@@ -61,12 +61,25 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     },
 
     formEntry: {
-      init: new qx.ui.core.Widget(),
+      // init: new qx.ui.core.Widget(),
+      init: null,
       event: "changeFormEntry"
     }
   },
 
   members: {
+    getValue: function() {
+      const form = this.getFormEntry();
+      if (form.classname !== "qx.ui.core.Widget") {
+        if (form.getValue) {
+          return form.getValue();
+        } else {
+          return null;
+        }
+      }
+      return null;
+    },
+
     // overridden
     _addWidgets: function() {
       this.addSpacer(); // from VirtualTreeItem
