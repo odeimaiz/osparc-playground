@@ -64,7 +64,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
 
     type: {
       check: "String",
-      apply: "__applyType",
       event: "changeType"
     },
 
@@ -115,23 +114,25 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     }
   },
 
+  statics: {
+    TYPES: {
+      string: "Text",
+      integer: "Spinner",
+      range: "Slider",
+      number: "Number",
+      password: "Password",
+      textarea: "TextArea",
+      boolean: "CheckBox",
+      checkbox: "CheckBox",
+      array: "Array",
+      colorpicker: "ColorPicker",
+      quantity: "Quantity",
+      quantity3: "Quantity3",
+      data: "FileButton"
+    }
+  },
+
   members: {
-    getValue: function() {
-      const form = this.getFormEntry();
-      if (form.classname !== "qx.ui.core.Widget") {
-        if (form.getValue) {
-          return form.getValue();
-        } else {
-          return null;
-        }
-      }
-      return null;
-    },
-
-    buildFormField: function() {
-      console.log("buildFormField");
-    },
-
     // overridden
     _addWidgets: function() {
       this.addSpacer(); // from VirtualTreeItem
@@ -143,21 +144,29 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       this.addWidget(new qx.ui.core.Spacer(), {flex: 1});
     },
 
-    __applyType: function(value, old) {
-      console.log("type", value);
-
-      const oldControl = this.getFormEntry();
-      const children = this._getChildren();
-      for (let i=0; i<children.length; i++) {
-        if (oldControl === children[i]) {
-          this._remove(oldControl);
+    getValue: function() {
+      const form = this.getFormEntry();
+      if (form && form.classname !== "qx.ui.core.Widget") {
+        if (form.getValue) {
+          return form.getValue();
+        } else {
+          return null;
         }
       }
+      return null;
+    },
 
-      if (value !== "object") {
-        const control = this.__getField(this.getType());
-        this.setFormEntry(control);
-        this.addWidget(this.getFormEntry());
+    buildFormField: function() {
+      if (this.getFormEntry()) {
+        return;
+      }
+
+      if (this.getType() !== "object") {
+        const control = this.__addField();
+        if (control) {
+          this.setFormEntry(control);
+          this.addWidget(this.getFormEntry());
+        }
       }
     },
 
@@ -167,31 +176,38 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       }
     },
 
-    __getField: function(type) {
-      if (type.match(/^data:/)) {
-        type = "data";
+    __translateWidget: function() {
+
+    },
+
+    __addField: function() {
+      const s = {
+        key: this.getKey(),
+        set: {},
+        widget: {}
+      };
+      if (this.getDefault()) {
+        s.defaultValue = this.getDefault();
+        s.set.value = this.getDefault();
       }
-      const myType = {
-        string: "Text",
-        password: "Password",
-        integer: "Spinner",
-        number: "Number",
-        boolean: "CheckBox",
-        data: "FileButton",
-        object: "Group",
-        array: "Array"
-      }[type];
+      if (this.getUiWidget()) {
+        s.widget.type = json2form.tree.PropertyTreeItem.TYPES[this.getUiWidget()];
+      } else {
+        let type = this.getType();
+        if (type.match(/^data:/)) {
+          type = "data";
+        }
+        s.widget.type = json2form.tree.PropertyTreeItem.TYPES[type];
+      }
+
       let control;
-      switch (myType) {
-        case "Date":
-          control = new qx.ui.form.DateField();
-          setup = this.__setupDateField;
-          break;
+      switch (s.widget.type) {
         case "Text":
           control = new qx.ui.form.TextField();
           setup = this.__setupTextField;
           break;
         case "Number":
+        case "Quantity":
         case "Spinner":
           control = new qx.ui.form.Spinner();
           control.set({
@@ -212,31 +228,68 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
           control = new qx.ui.form.CheckBox();
           setup = this.__setupBoolField;
           break;
-        case "SelectBox":
-          control = new qx.ui.form.SelectBox();
-          setup = this.__setupSelectBox;
-          break;
-        case "ComboBox":
-          control = new qx.ui.form.ComboBox();
-          setup = this.__setupComboBox;
-          break;
         case "FileButton":
           control = new qx.ui.form.TextField();
           setup = this.__setupFileButton;
           break;
+        case "ColorPicker":
+        case "Quantity3":
         case "Array":
           control = new json2form.form.ArraySpinner();
           control.set({
             maximum: 10000,
             minimum: -10000
           });
-          control.setNItems(3);
+          setup = this.__setupArraySpinner;
           break;
         default:
           console.error("unknown widget type " + type);
           break;
       }
+
+      if (control) {
+        setup.call(this, s, control);
+        control.set(s.set);
+        control.key = this.getKey();
+      }
+
       return control;
+    },
+    __setupTextArea: function(s, control) {
+      if (s.widget.minHeight) {
+        control.setMinHeight(s.widget.minHeight);
+      }
+      this.__setupTextField(s);
+    },
+    __setupTextField: function(s) {
+    },
+    __setupSpinner: function(s) {
+      if (s.defaultValue) {
+        s.set.value = parseInt(String(s.defaultValue));
+      } else {
+        s.set.value = 0;
+      }
+    },
+    __setupBoolField: function(s) {
+      if (s.defaultValue) {
+        s.set.value = (s.defaultValue === "true" || s.defaultValue === "True");
+      } else {
+        s.set.value = true;
+      }
+    },
+    __setupFileButton: function(s) {
+    },
+    __setupArraySpinner: function(s) {
+      if (this.getMinItems()) {
+        s.set.nItems = this.getMinItems();
+      }
+      const items = this.getItems();
+      if (items.getMinimum) {
+        s.set.minimum = items.getMinimum();
+      }
+      if (items.getMaximum) {
+        s.set.maximum = items.getMaximum();
+      }
     }
   }
 });
