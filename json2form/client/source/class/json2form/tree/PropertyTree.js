@@ -44,7 +44,14 @@ qx.Class.define("json2form.tree.PropertyTree", {
       bindItem: (c, item, id) => {
         c.bindDefaultProperties(item, id);
         c.bindProperty("key", "key", null, item, id);
+        c.bindProperty("readOnly", "readOnly", null, item, id);
+        c.bindProperty("ui_icon", "uiIcon", null, item, id);
         c.bindProperty("type", "type", null, item, id);
+        c.bindProperty("ui_widget", "uiWidget", null, item, id);
+        c.bindProperty("items", "items", null, item, id);
+        c.bindProperty("minItems", "minItems", null, item, id);
+        c.bindProperty("maxItems", "maxItems", null, item, id);
+        c.bindProperty("default", "default", null, item, id);
         c.bindProperty("value", "value", null, item, id);
         if (item.getType() !== "object") {
           c.bindPropertyReverse("value", "value", {
@@ -53,6 +60,9 @@ qx.Class.define("json2form.tree.PropertyTree", {
             }
           }, item, id);
         }
+      },
+      configureItem: item => {
+        item.buildFormField();
       }
     });
   },

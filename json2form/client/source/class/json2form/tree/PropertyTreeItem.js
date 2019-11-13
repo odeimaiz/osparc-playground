@@ -49,10 +49,58 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       event: "changeKey"
     },
 
+    readOnly: {
+      init: false,
+      check: "Boolean",
+      event: "changeReadOnly"
+    },
+
+    uiIcon: {
+      init: null,
+      check: "String",
+      nullable: true,
+      event: "changeUiIcon"
+    },
+
     type: {
       check: "String",
       apply: "__applyType",
       event: "changeType"
+    },
+
+    uiWidget: {
+      init: null,
+      check: "String",
+      nullable: true,
+      event: "changeUiWidget"
+    },
+
+    items: {
+      init: null,
+      check: "Object",
+      nullable: true,
+      event: "changeItems"
+    },
+
+    minItems: {
+      init: null,
+      check: "Number",
+      nullable: true,
+      event: "changeMinItems"
+    },
+
+    maxItems: {
+      init: null,
+      check: "Number",
+      nullable: true,
+      event: "changeMaxItems"
+    },
+
+    default: {
+      init: null,
+      check: "String",
+      nullable: true,
+      event: "changeDefault"
     },
 
     value: {
@@ -61,8 +109,8 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     },
 
     formEntry: {
-      // init: new qx.ui.core.Widget(),
       init: null,
+      nullable: true,
       event: "changeFormEntry"
     }
   },
@@ -78,6 +126,10 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
         }
       }
       return null;
+    },
+
+    buildFormField: function() {
+      console.log("buildFormField");
     },
 
     // overridden
