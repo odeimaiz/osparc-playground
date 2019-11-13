@@ -56,12 +56,13 @@ qx.Class.define("json2form.tree.PropertyTree", {
         if (item.getType() !== "object") {
           c.bindPropertyReverse("value", "value", {
             converter: function(data) {
+              if (data === null) {
+                return "null";
+              }
               return data;
             }
           }, item, id);
         }
-      },
-      configureItem: item => {
         item.buildFormField();
       }
     });
