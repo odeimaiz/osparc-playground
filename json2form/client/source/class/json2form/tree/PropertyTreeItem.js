@@ -246,7 +246,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
           setup = this.__setupArraySpinner;
           break;
         default:
-          console.error("unknown widget type " + type);
+          console.error("unknown widget type " + s.widget.type);
           break;
       }
 

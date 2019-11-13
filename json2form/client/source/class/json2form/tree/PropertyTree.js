@@ -79,9 +79,6 @@ qx.Class.define("json2form.tree.PropertyTree", {
   members: {
     __populateTree: function(value, old) {
       const model = this.__model = qx.data.marshal.Json.createModel(value, true);
-      model.addListener("changeBubble", e => {
-        console.log(e.getData());
-      }, this);
       this.setModel(model);
     }
   }
