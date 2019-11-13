@@ -52,6 +52,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     readOnly: {
       init: false,
       check: "Boolean",
+      apply: "__applyReadOnly",
       event: "changeReadOnly"
     },
 
@@ -156,7 +157,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       return null;
     },
 
-    buildFormField: function() {
+    buildFormEntry: function() {
       if (this.getFormEntry()) {
         return;
       }
@@ -176,8 +177,10 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       }
     },
 
-    __translateWidget: function() {
-
+    __applyReadOnly: function() {
+      if (this.getFormEntry()) {
+        this.getFormEntry().setEnabled(!this.getReadOnly());
+      }
     },
 
     __addField: function() {
@@ -270,12 +273,13 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
         s.set.value = 0;
       }
     },
-    __setupBoolField: function(s) {
+    __setupBoolField: function(s, control) {
       if (s.defaultValue) {
         s.set.value = (s.defaultValue === "true" || s.defaultValue === "True");
       } else {
         s.set.value = true;
       }
+      control.bind("value", this, "value");
     },
     __setupFileButton: function(s) {
     },
