@@ -46,6 +46,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindProperty("key", "key", null, item, id);
         c.bindProperty("ui_icon", "uiIcon", null, item, id);
         c.bindProperty("type", "type", null, item, id);
+        c.bindProperty("readOnly", "readOnly", null, item, id);
         c.bindProperty("ui_widget", "uiWidget", null, item, id);
         c.bindProperty("items", "items", null, item, id);
         c.bindProperty("minItems", "minItems", null, item, id);

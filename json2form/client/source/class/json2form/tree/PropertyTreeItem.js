@@ -263,6 +263,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
         control.set(s.set);
         control.key = this.getKey();
       }
+      control.setEnabled(!this.getReadOnly());
 
       return control;
     },
