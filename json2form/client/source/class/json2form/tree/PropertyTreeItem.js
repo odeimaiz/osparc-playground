@@ -98,7 +98,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
 
     default: {
       init: null,
-      check: "String",
       nullable: true,
       event: "changeDefault"
     },
@@ -163,8 +162,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     },
 
     buildFormEntry: function() {
-      console.log("buildFormEntry", this.getKey());
-      if (this.getFormEntry()) {
+      if (this.hasFormEntry()) {
         this._remove(this.getFormEntry());
         this.resetFormEntry();
       }
