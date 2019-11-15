@@ -127,7 +127,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       checkbox: "CheckBox",
       array: "Array",
       colorpicker: "ColorPicker",
-      quantity: "Quantity",
+      // quantity: "Quantity",
       quantity3: "Quantity3",
       data: "FileButton"
     }
@@ -146,8 +146,8 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     },
 
     getValue: function() {
-      const form = this.getFormEntry();
-      if (form && form.classname !== "qx.ui.core.Widget") {
+      if (this.hasFormEntry()) {
+        const form = this.getFormEntry();
         if (form.getValue) {
           return form.getValue();
         } else {
@@ -157,13 +157,19 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       return null;
     },
 
-    buildFormEntry: function() {
-      if (this.getFormEntry()) {
-        return;
-      }
+    hasFormEntry: function() {
+      const hasFormEntry = Boolean(this.getFormEntry && this.getFormEntry());
+      return hasFormEntry;
+    },
 
+    buildFormEntry: function() {
+      console.log("buildFormEntry", this.getKey());
+      if (this.getFormEntry()) {
+        this._remove(this.getFormEntry());
+        this.resetFormEntry();
+      }
       if (this.getType() !== "object") {
-        const control = this.__addField();
+        const control = this.__getField();
         if (control) {
           this.setFormEntry(control);
           this.addWidget(this.getFormEntry());
@@ -172,24 +178,28 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     },
 
     __applyValue: function(value, old) {
-      if (this.getFormEntry()) {
+      if (value === null) {
+        console.log("trying to set null in ", this.getKey());
+        return;
+      }
+      if (this.hasFormEntry()) {
         this.getFormEntry().setValue(value);
       }
     },
 
     __applyReadOnly: function() {
-      if (this.getFormEntry()) {
+      if (this.hasFormEntry()) {
         this.getFormEntry().setEnabled(!this.getReadOnly());
       }
     },
 
-    __addField: function() {
+    __getField: function() {
       const s = {
         key: this.getKey(),
         set: {},
         widget: {}
       };
-      if (this.getDefault()) {
+      if (this.getDefault) {
         s.defaultValue = this.getDefault();
         s.set.value = this.getDefault();
       }
@@ -265,6 +275,9 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       this.__setupTextField(s);
     },
     __setupTextField: function(s) {
+      if (s.defaultValue === null) {
+        s.set.value = "";
+      }
     },
     __setupSpinner: function(s) {
       if (s.defaultValue) {
@@ -279,7 +292,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       } else {
         s.set.value = true;
       }
-      control.bind("value", this, "value");
+      // control.bind("value", this, "value");
     },
     __setupFileButton: function(s) {
     },

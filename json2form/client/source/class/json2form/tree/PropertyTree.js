@@ -51,17 +51,23 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindProperty("minItems", "minItems", null, item, id);
         c.bindProperty("maxItems", "maxItems", null, item, id);
         c.bindProperty("default", "default", null, item, id);
-
         item.buildFormEntry();
-        c.bindProperty("readOnly", "readOnly", null, item, id);
-        c.bindProperty("value", "value", null, item, id);
-        if (item.getFormEntry()) {
+        return;
+        
+        if (item.getType() !== "object") {
+          c.bindProperty("readOnly", "readOnly", null, item, id);
+          c.bindProperty("value", "value", null, item, id);
+          /*
           c.bindPropertyReverse("value", "value", {
             converter: function(data) {
+              if (data === null) {
+                console.log("trying to set null in ");
+              }
               console.log(data);
               return data;
             }
           }, item, id);
+          */
         }
       }
     });
