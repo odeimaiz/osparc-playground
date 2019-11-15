@@ -165,6 +165,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       if (this.hasFormEntry()) {
         this._remove(this.getFormEntry());
         this.resetFormEntry();
+        this.resetValue();
       }
       if (this.getType() !== "object") {
         const control = this.__getField();
@@ -199,7 +200,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       };
       if (this.getDefault) {
         s.defaultValue = this.getDefault();
-        s.set.value = this.getDefault();
+        // s.set.value = this.getDefault();
       }
       if (this.getUiWidget()) {
         s.widget.type = json2form.tree.PropertyTreeItem.TYPES[this.getUiWidget()];

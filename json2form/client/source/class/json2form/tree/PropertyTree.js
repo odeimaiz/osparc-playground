@@ -53,10 +53,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindProperty("maxItems", "maxItems", null, item, id);
         c.bindProperty("default", "default", null, item, id);
         item.buildFormEntry();
-        return;
-        
-        if (item.getType() !== "object") {
-          c.bindProperty("readOnly", "readOnly", null, item, id);
+        if (item.hasFormEntry()) {
           c.bindProperty("value", "value", null, item, id);
           /*
           c.bindPropertyReverse("value", "value", {
