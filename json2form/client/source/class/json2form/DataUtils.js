@@ -117,7 +117,8 @@ qx.Class.define("json2form.DataUtils", {
           for (const propKey in data["properties"]) {
             const propObj = data["properties"][propKey];
             let prop = {};
-            prop["key"] = ("key" in propObj) ? propObj["key"] : propKey;
+            const parentKey = data["key"];
+            propObj["key"] = prop["key"] = parentKey + "." +propKey;
             prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
             const moreProps = json2form.DataUtils.jsonSchema2PropArray(propObj);
             prop = Object.assign(prop, moreProps);
