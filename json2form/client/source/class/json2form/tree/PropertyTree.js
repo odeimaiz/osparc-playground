@@ -84,6 +84,12 @@ qx.Class.define("json2form.tree.PropertyTree", {
     __populateTree: function(value, old) {
       const model = this.__model = qx.data.marshal.Json.createModel(value, true);
       this.setModel(model);
+
+      // Open first levels by default
+      const props = this.getModel().getProperties();
+      for (let i=0; i<props.length; i++) {
+        this.openNode(props.getItem(i));
+      }
     }
   }
 });
