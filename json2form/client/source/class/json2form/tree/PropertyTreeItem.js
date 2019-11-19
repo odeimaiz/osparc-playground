@@ -244,6 +244,14 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
           control = new qx.ui.form.TextField();
           setup = this.__setupFileButton;
           break;
+        case "Slider":
+          control = new qx.ui.form.Slider();
+          control.set({
+            maximum: 10000,
+            minimum: -10000
+          });
+          setup = this.__setupSlider;
+          break;
         case "ColorPicker":
         case "Quantity3":
         case "Array":
@@ -295,6 +303,18 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       // control.bind("value", this, "value");
     },
     __setupFileButton: function(s) {
+    },
+    __setupSlider: function(s, control) {
+      if (s.defaultValue) {
+        s.set.value = parseInt(String(s.defaultValue));
+      } else {
+        s.set.value = 0;
+      }
+      if (s.widget.minWidth) {
+        control.setMinWidth(s.widget.minWidth);
+      } else {
+        control.setMinWidth(120);
+      }
     },
     __setupArraySpinner: function(s) {
       if (this.getMinItems()) {
