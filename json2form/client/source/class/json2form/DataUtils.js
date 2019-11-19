@@ -45,27 +45,6 @@ qx.Class.define("json2form.DataUtils", {
       return rootData;
     },
 
-    jsonSchema2PropArray: function(data) {
-      let constData = {};
-      for (const key in data) {
-        if (key === "properties" && typeof data["properties"] === 'object') {
-          constData["properties"] = [];
-          for (const propKey in data["properties"]) {
-            const propObj = data["properties"][propKey];
-            let prop = {};
-            prop["key"] = ("key" in propObj) ? propObj["key"] : propKey;
-            prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
-            const moreProps = json2form.DataUtils.jsonSchema2PropArray(propObj);
-            prop = Object.assign(prop, moreProps);
-            constData["properties"].push(prop);
-          }
-        } else {
-          constData[key] = json2form.DataUtils.deepCloneObject(data[key]);
-        }
-      }
-      return constData;
-    },
-
     isObject: function (value) {
       return value && typeof value === 'object' && value.constructor === Object;
     },
@@ -125,6 +104,27 @@ qx.Class.define("json2form.DataUtils", {
           constData[key] = {
             "value": data[key]
           };
+        }
+      }
+      return constData;
+    },
+
+    jsonSchema2PropArray: function(data) {
+      let constData = {};
+      for (const key in data) {
+        if (key === "properties" && typeof data["properties"] === 'object') {
+          constData["properties"] = [];
+          for (const propKey in data["properties"]) {
+            const propObj = data["properties"][propKey];
+            let prop = {};
+            prop["key"] = ("key" in propObj) ? propObj["key"] : propKey;
+            prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
+            const moreProps = json2form.DataUtils.jsonSchema2PropArray(propObj);
+            prop = Object.assign(prop, moreProps);
+            constData["properties"].push(prop);
+          }
+        } else {
+          constData[key] = json2form.DataUtils.deepCloneObject(data[key]);
         }
       }
       return constData;
