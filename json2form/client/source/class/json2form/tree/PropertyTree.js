@@ -55,30 +55,24 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindProperty("maxItems", "maxItems", null, item, id);
         c.bindProperty("default", "default", null, item, id);
         item.buildFormEntry();
-        if (item.hasFormEntry()) {
-          c.bindProperty("value", "value", null, item, id);
-          /*
-          c.bindPropertyReverse("value", "value", {
-            converter: function(data) {
-              if (data === null) {
-                console.log("trying to set null in ");
-              }
-              console.log(data);
-              return data;
-            }
-          }, item, id);
-          */
-        }
+        c.bindProperty("value", "value", null, item, id);
       }
     });
   },
 
   properties: {
-    mergedData: {
+    schema: {
       check: "Object",
       init: {},
-      event: "changeMergedData",
+      event: "changeSchema",
       apply: "__populateTree"
+    },
+
+    data: {
+      check: "Object",
+      init: {},
+      event: "changeData",
+      apply: "__populateData"
     }
   },
 
@@ -94,6 +88,27 @@ qx.Class.define("json2form.tree.PropertyTree", {
       const model = this.__model = qx.data.marshal.Json.createModel(value, true);
       this.setModel(model);
 
+      this.__addOpenCloseListeners();
+      this.__openFirstLevel();
+      this.__reopenItems();
+    },
+
+    __populateData: function(value, old) {
+      // if new is same as old, skip
+      if (JSON.stringify(value) === JSON.stringify(old)) {
+        return;
+      }
+
+      const flatObj = json2form.DataUtils.formData2FlatObj(value);
+      for (const key in flatObj) {
+        const leaf = this.getLeaf(key);
+        if (leaf) {
+          leaf.setValue(flatObj[key]);
+        }
+      }
+    },
+
+    __addOpenCloseListeners: function() {
       if (!this.hasListener("open")) {
         this.addListener("open", e => {
           const item = e.getData();
@@ -106,13 +121,17 @@ qx.Class.define("json2form.tree.PropertyTree", {
           this.__openItems.delete(item.getKey());
         }, this);
       }
+    },
 
+    __openFirstLevel: function() {
       // Open first levels by default
       const props = this.getModel().getProperties();
       for (let i=0; i<props.length; i++) {
         this.openNode(props.getItem(i));
       }
+    },
 
+    __reopenItems: function() {
       const onlyNodes = this.getNodes();
       this.__openItems.forEach(openItem => {
         const nodeFound = onlyNodes.find(node => node.getKey() === openItem);

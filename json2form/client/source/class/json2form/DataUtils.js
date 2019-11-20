@@ -109,6 +109,19 @@ qx.Class.define("json2form.DataUtils", {
       return constData;
     },
 
+    formData2FlatObj: function(data, parentKey, flatEntry) {
+      flatEntry = flatEntry ? flatEntry : {};
+      for (const key in data) {
+        const newKey = this.concatKey(key, parentKey);
+        if (this.isObject(data[key])) {
+          this.formData2FlatObj(data[key], newKey, flatEntry);
+        } else {
+          flatEntry[newKey] = this.deepCloneObject(data[key]);
+        }
+      }
+      return flatEntry;
+    },
+
     jsonSchema2PropArray: function(data) {
       let constData = {};
       for (const key in data) {

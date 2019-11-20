@@ -88,7 +88,10 @@ qx.Class.define("json2form.Application", {
     },
 
     __buildJsons: function() {
-      const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
+      const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
+
+
+      const jsonSchemasLayout = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
 
       const vBoxSrc = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
       const jsonSchemaSrcLayout = this.__buildJsonLayout("JSONSchemaSrc");
@@ -101,12 +104,7 @@ qx.Class.define("json2form.Application", {
       vBoxSrc.add(uiSchemaSrcLayout, {
         flex: 1
       });
-      const formDataSrcLayout = this.__buildJsonLayout("formDataSrc");
-      this.__formDataSrc = formDataSrcLayout.getChildren()[1];
-      vBoxSrc.add(formDataSrcLayout, {
-        flex: 1
-      });
-      jsonsLayout.add(vBoxSrc, {
+      jsonSchemasLayout.add(vBoxSrc, {
         flex: 1
       });
 
@@ -122,26 +120,31 @@ qx.Class.define("json2form.Application", {
       vBoxMod.add(uiSchemaModLayout, {
         flex: 1
       });
-      const formDataModLayout = this.__buildJsonLayout("formDataMod");
-      this.__formDataMod = formDataModLayout.getChildren()[1];
-      vBoxMod.add(formDataModLayout, {
-        flex: 1
-      });
-      jsonsLayout.add(vBoxMod, {
+      jsonSchemasLayout.add(vBoxMod, {
         flex: 1
       });
 
 
       const mergedSchemaMod = this.__buildJsonLayout("MergedSchemaMod");
       this.__mergedSchemaMod = mergedSchemaMod.getChildren()[1];
-      jsonsLayout.add(mergedSchemaMod, {
+      jsonSchemasLayout.add(mergedSchemaMod, {
         flex: 1
       });
 
 
-      const mergedForTree = this.__buildJsonLayout("MergedForTree");
+      const mergedForTree = this.__buildJsonLayout("MergedForTreeBinding");
       this.__mergedForTree = mergedForTree.getChildren()[1];
-      jsonsLayout.add(mergedForTree, {
+      jsonSchemasLayout.add(mergedForTree, {
+        flex: 1
+      });
+
+
+      const formDataSrcLayout = this.__buildJsonLayout("formDataSrc");
+      this.__formDataSrc = formDataSrcLayout.getChildren()[1];
+      jsonsLayout.add(jsonSchemasLayout, {
+        flex: 1
+      });
+      jsonsLayout.add(formDataSrcLayout, {
         flex: 1
       });
 
@@ -190,17 +193,10 @@ qx.Class.define("json2form.Application", {
         const valueObj = json2form.DataUtils.uiSchema2PropObj(null, value);
         this.__uiSchemaMod.setValue(json2form.DataUtils.stringify(valueObj));
       });
-      this.__formDataSrc.addListener("changeValue", e => {
-        const data = e.getData();
-        const value = JSON.parse(data);
-        const valueObj = json2form.DataUtils.formData2PropObj(null, value);
-        this.__formDataMod.setValue(json2form.DataUtils.stringify(valueObj));
-      });
 
       [
         this.__jsonSchemaMod,
-        this.__uiSchemaMod,
-        this.__formDataMod
+        this.__uiSchemaMod
       ].forEach(elemMod => {
         elemMod.addListener("changeValue", e => {
           const data = e.getData();
@@ -224,7 +220,12 @@ qx.Class.define("json2form.Application", {
       this.__mergedForTree.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
-        this.__tree.setMergedData(value);
+        this.__tree.setSchema(value);
+      });
+      this.__formDataSrc.addListener("changeValue", e => {
+        const data = e.getData();
+        const value = JSON.parse(data);
+        this.__tree.setData(value);
       });
     },
 

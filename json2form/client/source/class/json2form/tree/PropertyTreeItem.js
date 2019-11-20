@@ -41,6 +41,8 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     this.set({
       indent: 11
     });
+
+    this.initValue();
   },
 
   properties: {
@@ -103,6 +105,8 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     },
 
     value: {
+      init: null,
+      nullable: true,
       apply: "__applyValue",
       event: "changeValue"
     },
