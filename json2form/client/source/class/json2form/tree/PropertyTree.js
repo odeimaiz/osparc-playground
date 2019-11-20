@@ -39,6 +39,8 @@ qx.Class.define("json2form.tree.PropertyTree", {
       hideRoot: true
     })
 
+    this.__openItems = new Set();
+
     this.setDelegate({
       createItem: () => new json2form.tree.PropertyTreeItem(),
       bindItem: (c, item, id) => {
@@ -81,15 +83,79 @@ qx.Class.define("json2form.tree.PropertyTree", {
   },
 
   members: {
+    __openItems: null,
+
     __populateTree: function(value, old) {
+      // if new is same as old, skip
+      if (JSON.stringify(value) === JSON.stringify(old)) {
+        return;
+      }
+
       const model = this.__model = qx.data.marshal.Json.createModel(value, true);
       this.setModel(model);
+
+      if (!this.hasListener("open")) {
+        this.addListener("open", e => {
+          const item = e.getData();
+          this.__openItems.add(item.getKey());
+        }, this);
+      }
+      if (!this.hasListener("close")) {
+        this.addListener("close", e => {
+          const item = e.getData();
+          this.__openItems.delete(item.getKey());
+        }, this);
+      }
 
       // Open first levels by default
       const props = this.getModel().getProperties();
       for (let i=0; i<props.length; i++) {
         this.openNode(props.getItem(i));
       }
+
+      const onlyNodes = this.getNodes();
+      this.__openItems.forEach(openItem => {
+        const nodeFound = onlyNodes.find(node => node.getKey() === openItem);
+        if (nodeFound) {
+          this.openNode(nodeFound);
+        }
+      });
+    },
+
+    getAllItems: function() {
+      return this.__getAllItems(this.getModel());
+    },
+
+    getNodes: function() {
+      const allItems = this.getAllItems();
+      const nodes = allItems.filter(function(item) {
+        return ("getProperties" in item);
+      });
+      return nodes;
+    },
+
+    getLeaves: function() {
+      const allItems = this.getAllItems();
+      const nodes = allItems.filter(function(item) {
+        return !("getProperties" in item);
+      });
+      return nodes;
+    },
+
+    __getAllItems: function(node) {
+      let nodes = [];
+      nodes.push(node);
+      if ("getProperties" in node) {
+        const props = node.getProperties();
+        for (let i=0; i<props.length; i++) {
+          const prop = props.getItem(i);
+          nodes.push(prop);
+          if ("getProperties" in prop) {
+            nodes = nodes.concat(this.__getAllItems(prop));
+          }
+        }
+      }
+      return nodes;
     }
   }
 });
