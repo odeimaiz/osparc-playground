@@ -132,6 +132,9 @@ qx.Class.define("json2form.DataUtils", {
           constData[key] = json2form.DataUtils.deepCloneObject(data[key]);
         }
       }
+      if (constData["type"] !== "object") {
+        constData["value"] = null;
+      }
       return constData;
     }
   }
