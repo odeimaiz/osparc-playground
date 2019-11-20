@@ -39,6 +39,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
       hideRoot: true
     })
 
+    this.__flatObj = {};
     this.__openItems = new Set();
 
     this.setDelegate({
@@ -58,6 +59,14 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindProperty("default", "default", null, item, id);
         item.buildFormEntry();
         c.bindProperty("value", "value", null, item, id);
+
+        if (item.hasFormEntry()) {
+          item.addListener("changeValue", e => {
+            if (e.getData() !== null) {
+              this.__valueChanged(item.getKey(), e.getData());
+            }
+          });
+        }
       }
     });
   },
@@ -79,6 +88,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
   },
 
   members: {
+    __flatObj: null,
     __openItems: null,
 
     __populateTree: function(value, old) {
@@ -101,12 +111,25 @@ qx.Class.define("json2form.tree.PropertyTree", {
         return;
       }
 
-      const flatObj = json2form.DataUtils.formData2FlatObj(value);
+      const flatObj = this.__flatObj = json2form.DataUtils.formData2FlatObj(value);
       for (const key in flatObj) {
         const leaf = this.getLeaf(key);
         if (leaf) {
           leaf.setValue(flatObj[key]);
         }
+      }
+    },
+
+    __valueChanged: function(key, value) {
+      if (key in this.__flatObj) {
+        // if (this.__flatObj[key] !== value) {
+        if (JSON.stringify(this.__flatObj[key]) !== JSON.stringify(value)) {
+          this.__flatObj[key] = value;
+          console.log("Data changed", key, value);
+        }
+      } else {
+        this.__flatObj[key] = value;
+        console.log("Data changed", key, value);
       }
     },
 

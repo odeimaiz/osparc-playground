@@ -41,8 +41,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     this.set({
       indent: 11
     });
-
-    this.initValue();
   },
 
   properties: {
@@ -132,6 +130,10 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     }
   },
 
+  events: {
+    "dataChanged": "qx.event.type.Data"
+  },
+
   statics: {
     TYPES: {
       string: "Text",
@@ -181,7 +183,11 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
 
     buildFormEntry: function() {
       if (this.hasFormEntry()) {
-        this._remove(this.getFormEntry());
+        formEntry = this.getFormEntry();
+        if (this.getKey() === formEntry.key) {
+          return;
+        }
+        this._remove(formEntry);
         this.resetFormEntry();
         this.resetValue();
       }
@@ -196,7 +202,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
 
     __applyValue: function(value, old) {
       if (value === null) {
-        // console.log("trying to set null in ", this.getKey());
         return;
       }
       if (this.hasFormEntry()) {
@@ -276,8 +281,10 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
         setup.call(this, s, control);
         control.set(s.set);
         control.key = this.getKey();
+
+        control.setEnabled(!this.getReadOnly());
+        control.bind("value", this, "value");
       }
-      control.setEnabled(!this.getReadOnly());
 
       return control;
     },
