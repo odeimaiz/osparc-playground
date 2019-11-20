@@ -128,7 +128,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
 
     getNodes: function() {
       const allItems = this.getAllItems();
-      const nodes = allItems.filter(function(item) {
+      const nodes = allItems.filter((item) => {
         return ("getProperties" in item);
       });
       return nodes;
@@ -136,10 +136,18 @@ qx.Class.define("json2form.tree.PropertyTree", {
 
     getLeaves: function() {
       const allItems = this.getAllItems();
-      const nodes = allItems.filter(function(item) {
+      const nodes = allItems.filter((item) => {
         return !("getProperties" in item);
       });
       return nodes;
+    },
+
+    getLeaf: function(key) {
+      const leaves = this.getLeaves();
+      const leaf = leaves.find((item) => {
+        return item.getKey() === key;
+      });
+      return leaf;
     },
 
     __getAllItems: function(node) {
