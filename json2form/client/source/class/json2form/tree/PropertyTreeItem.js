@@ -178,7 +178,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
 
     __applyValue: function(value, old) {
       if (value === null) {
-        console.log("trying to set null in ", this.getKey());
+        // console.log("trying to set null in ", this.getKey());
         return;
       }
       if (this.hasFormEntry()) {
@@ -200,7 +200,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       };
       if (this.getDefault) {
         s.defaultValue = this.getDefault();
-        // s.set.value = this.getDefault();
       }
       if (this.getUiWidget()) {
         s.widget.type = json2form.tree.PropertyTreeItem.TYPES[this.getUiWidget()];
@@ -285,30 +284,31 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     __setupTextField: function(s) {
       if (s.defaultValue === null) {
         s.set.value = "";
+      } else {
+        s.set.value = s.defaultValue;
       }
     },
     __setupSpinner: function(s) {
-      if (s.defaultValue) {
-        s.set.value = parseInt(String(s.defaultValue));
-      } else {
+      if (s.defaultValue === null) {
         s.set.value = 0;
+      } else {
+        s.set.value = parseInt(String(s.defaultValue));
       }
     },
     __setupBoolField: function(s, control) {
-      if (s.defaultValue) {
-        s.set.value = (s.defaultValue === "true" || s.defaultValue === "True");
-      } else {
+      if (s.defaultValue === null) {
         s.set.value = true;
+      } else {
+        s.set.value = s.defaultValue;
       }
-      // control.bind("value", this, "value");
     },
     __setupFileButton: function(s) {
     },
     __setupSlider: function(s, control) {
-      if (s.defaultValue) {
-        s.set.value = parseInt(String(s.defaultValue));
-      } else {
+      if (s.defaultValue === null) {
         s.set.value = 0;
+      } else {
+        s.set.value = parseInt(String(s.defaultValue));
       }
       if (s.widget.minWidth) {
         control.setMinWidth(s.widget.minWidth);
