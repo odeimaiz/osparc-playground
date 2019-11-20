@@ -125,14 +125,14 @@ qx.Class.define("json2form.Application", {
       });
 
 
-      const mergedSchemaMod = this.__buildJsonLayout("MergedSchemaMod");
+      const mergedSchemaMod = this.__buildJsonLayout("SchemasMerged");
       this.__mergedSchemaMod = mergedSchemaMod.getChildren()[1];
       jsonSchemasLayout.add(mergedSchemaMod, {
         flex: 1
       });
 
 
-      const mergedForTree = this.__buildJsonLayout("MergedForTreeBinding");
+      const mergedForTree = this.__buildJsonLayout("SchemasForTreeBinding");
       this.__mergedForTree = mergedForTree.getChildren()[1];
       jsonSchemasLayout.add(mergedForTree, {
         flex: 1
