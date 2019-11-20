@@ -77,6 +77,20 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       event: "changeUiWidget"
     },
 
+    minimum: {
+      init: null,
+      check: "Number",
+      nullable: true,
+      event: "changeMinimum"
+    },
+
+    maximum: {
+      init: null,
+      check: "Number",
+      nullable: true,
+      event: "changeMaximum"
+    },
+
     items: {
       init: null,
       check: "Object",
@@ -225,10 +239,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
         case "Quantity":
         case "Spinner":
           control = new qx.ui.form.Spinner();
-          control.set({
-            maximum: 10000,
-            minimum: -10000
-          });
           setup = this.__setupSpinner;
           break;
         case "Password":
@@ -249,20 +259,12 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
           break;
         case "Slider":
           control = new qx.ui.form.Slider();
-          control.set({
-            maximum: 10000,
-            minimum: -10000
-          });
           setup = this.__setupSlider;
           break;
         case "ColorPicker":
         case "Quantity3":
         case "Array":
           control = new json2form.form.ArraySpinner();
-          control.set({
-            maximum: 10000,
-            minimum: -10000
-          });
           setup = this.__setupArraySpinner;
           break;
         default:
@@ -298,6 +300,12 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       } else {
         s.set.value = parseInt(String(s.defaultValue));
       }
+      if (this.getMinimum) {
+        s.set.minimum = this.getMinimum();
+      }
+      if (this.getMaximum) {
+        s.set.maximum = this.getMaximum();
+      }
     },
     __setupBoolField: function(s, control) {
       if (s.defaultValue === null) {
@@ -313,6 +321,12 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
         s.set.value = 0;
       } else {
         s.set.value = parseInt(String(s.defaultValue));
+      }
+      if (this.getMinimum) {
+        s.set.minimum = this.getMinimum();
+      }
+      if (this.getMaximum) {
+        s.set.maximum = this.getMaximum();
       }
       if (s.widget.minWidth) {
         control.setMinWidth(s.widget.minWidth);

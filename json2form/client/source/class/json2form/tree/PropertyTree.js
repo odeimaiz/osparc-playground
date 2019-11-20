@@ -50,6 +50,8 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindProperty("type", "type", null, item, id);
         c.bindProperty("readOnly", "readOnly", null, item, id);
         c.bindProperty("ui_widget", "uiWidget", null, item, id);
+        c.bindProperty("minimum", "minimum", null, item, id);
+        c.bindProperty("maximum", "maximum", null, item, id);
         c.bindProperty("items", "items", null, item, id);
         c.bindProperty("minItems", "minItems", null, item, id);
         c.bindProperty("maxItems", "maxItems", null, item, id);
