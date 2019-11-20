@@ -38,9 +38,9 @@ qx.Class.define("json2form.DataUtils", {
     },
 
     addRootKey2Obj: function(data) {
-      const rootData = json2form.DataUtils.getRootObj();
+      const rootData = this.getRootObj();
       for (const key in data) {
-        rootData.properties[key] = json2form.DataUtils.deepCloneObject(data[key]);
+        rootData.properties[key] = this.deepCloneObject(data[key]);
       }
       return rootData;
     },
@@ -95,10 +95,10 @@ qx.Class.define("json2form.DataUtils", {
             }
           }
           if (Object.entries(woChildren).length) {
-            constData[key] = deepMerge.mergeArrayOfObjs([constData[key], json2form.DataUtils.formData2PropObj(data[key]["properties"], woChildren)]);
+            constData[key] = deepMerge.mergeArrayOfObjs([constData[key], this.formData2PropObj(data[key]["properties"], woChildren)]);
           }
           if (Object.entries(wChildren).length) {
-            constData[key]["properties"] = json2form.DataUtils.formData2PropObj(data[key]["properties"], wChildren);
+            constData[key]["properties"] = this.formData2PropObj(data[key]["properties"], wChildren);
           }
         } else {
           constData[key] = {
@@ -118,24 +118,29 @@ qx.Class.define("json2form.DataUtils", {
             const propObj = data["properties"][propKey];
             let prop = {};
             const parentKey = data["key"];
-            let newKey = propKey;
-            if (parentKey !== "root") {
-              newKey = parentKey + "." + newKey;
-            }
+            const newKey = this.concatKey(propKey, parentKey);
             propObj["key"] = prop["key"] = newKey;
             prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
-            const moreProps = json2form.DataUtils.jsonSchema2PropArray(propObj);
+            const moreProps = this.jsonSchema2PropArray(propObj);
             prop = Object.assign(prop, moreProps);
             constData["properties"].push(prop);
           }
         } else {
-          constData[key] = json2form.DataUtils.deepCloneObject(data[key]);
+          constData[key] = this.deepCloneObject(data[key]);
         }
       }
       if (constData["type"] !== "object") {
         constData["value"] = null;
       }
       return constData;
+    },
+
+    concatKey: function(key, parentKey) {
+      let newKey = key;
+      if (parentKey && parentKey !== "root") {
+        newKey = parentKey + "." + newKey;
+      }
+      return newKey;
     }
   }
 });
