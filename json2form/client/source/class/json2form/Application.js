@@ -31,7 +31,6 @@ qx.Class.define("json2form.Application", {
     __formDataSrc: null,
     __jsonSchemaMod: null,
     __uiSchemaMod: null,
-    __formDataMod: null,
     __mergedSchemaMod: null,
     __mergedForTree: null,
     __tree: null,
@@ -112,11 +111,13 @@ qx.Class.define("json2form.Application", {
       const vBoxMod = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
       const jsonSchemaModLayout = this.__buildJsonLayout("JSONSchemaMod");
       this.__jsonSchemaMod = jsonSchemaModLayout.getChildren()[1];
+      this.__jsonSchemaMod.setReadOnly(true);
       vBoxMod.add(jsonSchemaModLayout, {
         flex: 1
       });
       const uiSchemaModLayout = this.__buildJsonLayout("UISchemaMod");
       this.__uiSchemaMod = uiSchemaModLayout.getChildren()[1];
+      this.__uiSchemaMod.setReadOnly(true);
       vBoxMod.add(uiSchemaModLayout, {
         flex: 1
       });
@@ -127,6 +128,7 @@ qx.Class.define("json2form.Application", {
 
       const mergedSchemaMod = this.__buildJsonLayout("SchemasMerged");
       this.__mergedSchemaMod = mergedSchemaMod.getChildren()[1];
+      this.__mergedSchemaMod.setReadOnly(true);
       jsonSchemasLayout.add(mergedSchemaMod, {
         flex: 1
       });
@@ -134,6 +136,7 @@ qx.Class.define("json2form.Application", {
 
       const mergedForTree = this.__buildJsonLayout("SchemasForTreeBinding");
       this.__mergedForTree = mergedForTree.getChildren()[1];
+      this.__mergedForTree.setReadOnly(true);
       jsonSchemasLayout.add(mergedForTree, {
         flex: 1
       });
@@ -184,44 +187,46 @@ qx.Class.define("json2form.Application", {
 
       this.__jsonSchemaSrc.addListener("changeValue", e => {
         const data = e.getData();
-        const value = JSON.parse(data);
+        let value = JSON.parse(data);
         this.__jsonSchemaMod.setValue(json2form.DataUtils.stringify(value));
-      });
-      this.__uiSchemaSrc.addListener("changeValue", e => {
-        const data = e.getData();
-        const value = JSON.parse(data);
-        const valueObj = json2form.DataUtils.uiSchema2PropObj(null, value);
-        this.__uiSchemaMod.setValue(json2form.DataUtils.stringify(valueObj));
-      });
 
-      [
-        this.__jsonSchemaMod,
-        this.__uiSchemaMod
-      ].forEach(elemMod => {
-        elemMod.addListener("changeValue", e => {
-          const data = e.getData();
-          let value = JSON.parse(data);
-          const oldVal = JSON.parse(this.__mergedSchemaMod.getValue());
-          if (oldVal) {
-            value = deepMerge.mergeArrayOfObjs([oldVal, value]);
-          }
-          this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(value));
-        });
-      });
 
-      this.__mergedSchemaMod.addListener("changeValue", e => {
-        const data = e.getData();
-        const value = JSON.parse(data);
+        const oldVal = JSON.parse(this.__mergedSchemaMod.getValue());
+        if (oldVal) {
+          value = deepMerge.mergeArrayOfObjs([oldVal, value]);
+        }
+        this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(value));
+
+
         const valueWRoot = json2form.DataUtils.addRootKey2Obj(value);
         const newFormat = json2form.DataUtils.jsonSchema2PropArray(valueWRoot);
         this.__mergedForTree.setValue(json2form.DataUtils.stringify(newFormat));
+
+
+        this.__tree.setSchema(newFormat);
+      });
+      this.__uiSchemaSrc.addListener("changeValue", e => {
+        const data = e.getData();
+        const val = JSON.parse(data);
+        let value = json2form.DataUtils.uiSchema2PropObj(null, val);
+        this.__uiSchemaMod.setValue(json2form.DataUtils.stringify(value));
+
+
+        const oldVal = JSON.parse(this.__mergedSchemaMod.getValue());
+        if (oldVal) {
+          value = deepMerge.mergeArrayOfObjs([oldVal, value]);
+        }
+        this.__mergedSchemaMod.setValue(json2form.DataUtils.stringify(value));
+
+
+        const valueWRoot = json2form.DataUtils.addRootKey2Obj(value);
+        const newFormat = json2form.DataUtils.jsonSchema2PropArray(valueWRoot);
+        this.__mergedForTree.setValue(json2form.DataUtils.stringify(newFormat));
+
+
+        this.__tree.setSchema(newFormat);
       });
 
-      this.__mergedForTree.addListener("changeValue", e => {
-        const data = e.getData();
-        const value = JSON.parse(data);
-        this.__tree.setSchema(value);
-      });
       this.__formDataSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
