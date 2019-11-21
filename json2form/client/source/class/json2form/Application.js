@@ -52,7 +52,8 @@ qx.Class.define("json2form.Application", {
       json2form.wrapper.DeepMerge.getInstance().init();
 
       this.__buildLayout();
-      this.__bindElements();
+      this.__bindSchemas();
+      this.__bindDatas();
 
       this.__populateWithfake();
     },
@@ -182,7 +183,7 @@ qx.Class.define("json2form.Application", {
       return vBox;
     },
 
-    __bindElements: function() {
+    __bindSchemas: function() {
       const deepMerge = json2form.wrapper.DeepMerge.getInstance();
 
       this.__jsonSchemaSrc.addListener("changeValue", e => {
@@ -226,11 +227,35 @@ qx.Class.define("json2form.Application", {
 
         this.__tree.setSchema(newFormat);
       });
+    },
 
+    __bindDatas: function() {
       this.__formDataSrc.addListener("changeValue", e => {
         const data = e.getData();
         const value = JSON.parse(data);
         this.__tree.setData(value);
+      });
+
+      this.__tree.addListener("dataChanged", e => {
+        const deepMerge = json2form.wrapper.DeepMerge.getInstance();
+
+        const data = e.getData();
+        for (const key in data) {
+          const keys = key.split(".");
+          const deepestKey = keys[keys.length-1];
+          let changedValue = {};
+          keys.reduce((o, s) => {
+            o[s] = {};
+            if (s === deepestKey) {
+              o[s] = data[key];
+            }
+            return o[s];
+          }, changedValue);
+  
+          const valueOld = JSON.parse(this.__formDataSrc.getValue());
+          const newValue = deepMerge.mergeArrayOfObjs([valueOld, changedValue]);
+          this.__formDataSrc.setValue(json2form.DataUtils.stringify(newValue));
+        }
       });
     },
 

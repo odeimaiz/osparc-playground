@@ -130,10 +130,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     }
   },
 
-  events: {
-    "dataChanged": "qx.event.type.Data"
-  },
-
   statics: {
     TYPES: {
       string: "Text",

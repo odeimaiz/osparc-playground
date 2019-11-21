@@ -87,6 +87,10 @@ qx.Class.define("json2form.tree.PropertyTree", {
     }
   },
 
+  events: {
+    "dataChanged": "qx.event.type.Data"
+  },
+
   members: {
     __flatObj: null,
     __openItems: null,
@@ -121,15 +125,17 @@ qx.Class.define("json2form.tree.PropertyTree", {
     },
 
     __valueChanged: function(key, value) {
+      const data = {};
+      data[key] = value;
       if (key in this.__flatObj) {
         // if (this.__flatObj[key] !== value) {
         if (JSON.stringify(this.__flatObj[key]) !== JSON.stringify(value)) {
           this.__flatObj[key] = value;
-          console.log("Data changed", key, value);
+          this.fireDataEvent("dataChanged", data);
         }
       } else {
         this.__flatObj[key] = value;
-        console.log("Data changed", key, value);
+        this.fireDataEvent("dataChanged", data);
       }
     },
 
