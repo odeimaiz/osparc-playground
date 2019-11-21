@@ -78,37 +78,6 @@ qx.Class.define("json2form.DataUtils", {
       return constData;
     },
 
-    formData2PropObj: function(parentObj, data) {
-      const deepMerge = json2form.wrapper.DeepMerge.getInstance();
-      let constData = parentObj ? parentObj : {};
-      for (const key in data) {
-        if (json2form.DataUtils.isObject(data[key])) {
-          constData[key] = {};
-          const dataCopy = json2form.DataUtils.deepCloneObject(data[key]);
-          let wChildren = {};
-          let woChildren = {};
-          for (const keyC in dataCopy) {
-            if (keyC.includes("ui:")) {
-              woChildren[keyC.replace("ui:", "ui_")] = dataCopy[keyC];
-            } else {
-              wChildren[keyC] = dataCopy[keyC];
-            }
-          }
-          if (Object.entries(woChildren).length) {
-            constData[key] = deepMerge.mergeArrayOfObjs([constData[key], this.formData2PropObj(data[key]["properties"], woChildren)]);
-          }
-          if (Object.entries(wChildren).length) {
-            constData[key]["properties"] = this.formData2PropObj(data[key]["properties"], wChildren);
-          }
-        } else {
-          constData[key] = {
-            "value": data[key]
-          };
-        }
-      }
-      return constData;
-    },
-
     formData2FlatObj: function(data, parentKey, flatEntry) {
       flatEntry = flatEntry ? flatEntry : {};
       for (const key in data) {
