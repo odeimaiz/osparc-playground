@@ -81,14 +81,14 @@ qx.Class.define("json2form.tree.PropertyTree", {
       check: "Object",
       init: {},
       event: "changeSchema",
-      apply: "__populateTree"
+      apply: "__applySchema"
     },
 
     data: {
       check: "Object",
       init: {},
       event: "changeData",
-      apply: "__populateData"
+      apply: "__applyData"
     }
   },
 
@@ -100,7 +100,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
     __flatObj: null,
     __openItems: null,
 
-    __populateTree: function(value, old) {
+    __applySchema: function(value, old) {
       // if new is same as old, skip
       if (JSON.stringify(value) === JSON.stringify(old)) {
         return;
@@ -114,7 +114,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
       this.__reopenItems();
     },
 
-    __populateData: function(value, old) {
+    __applyData: function(value, old) {
       // if new is same as old, skip
       if (JSON.stringify(value) === JSON.stringify(old)) {
         return;
