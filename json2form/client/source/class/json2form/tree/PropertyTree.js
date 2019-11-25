@@ -58,9 +58,14 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindProperty("maxItems", "maxItems", null, item, id);
         c.bindProperty("default", "default", null, item, id);
         item.buildFormEntry();
-        c.bindProperty("value", "value", null, item, id);
+        if (item.getKey() in this.__flatObj) {
+          item.setValue(this.__flatObj[item.getKey()]);
+        } else {
+          c.bindProperty("value", "value", null, item, id);
+        }
 
         if (item.hasFormEntry()) {
+          item.getFormEntry().bind("value", item, "value");
           item.addListener("changeValue", e => {
             if (e.getData() !== null) {
               this.__valueChanged(item.getKey(), e.getData());

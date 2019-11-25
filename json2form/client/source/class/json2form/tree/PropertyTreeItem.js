@@ -279,7 +279,6 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
         control.key = this.getKey();
 
         control.setEnabled(!this.getReadOnly());
-        control.bind("value", this, "value");
       }
 
       return control;

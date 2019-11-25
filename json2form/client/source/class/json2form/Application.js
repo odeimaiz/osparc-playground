@@ -251,6 +251,8 @@ qx.Class.define("json2form.Application", {
             }
             return o[s];
           }, changedValue);
+
+          console.log("dataChanged", changedValue);
   
           const valueOld = JSON.parse(this.__formDataSrc.getValue());
           const newValue = deepMerge.mergeArrayOfObjs([valueOld, changedValue]);
