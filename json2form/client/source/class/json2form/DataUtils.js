@@ -53,9 +53,9 @@ qx.Class.define("json2form.DataUtils", {
       const deepMerge = json2form.wrapper.DeepMerge.getInstance();
       let constData = parentObj ? parentObj : {};
       for (const key in data) {
-        if (json2form.DataUtils.isObject(data[key])) {
+        if (this.isObject(data[key])) {
           constData[key] = {};
-          const dataCopy = json2form.DataUtils.deepCloneObject(data[key]);
+          const dataCopy = this.deepCloneObject(data[key]);
           let wChildren = {};
           let woChildren = {};
           for (const keyC in dataCopy) {
@@ -66,13 +66,13 @@ qx.Class.define("json2form.DataUtils", {
             }
           }
           if (Object.entries(woChildren).length) {
-            constData[key] = deepMerge.mergeArrayOfObjs([constData[key], json2form.DataUtils.uiSchema2PropObj(data[key]["properties"], woChildren)]);
+            constData[key] = deepMerge.mergeArrayOfObjs([constData[key], this.uiSchema2PropObj(data[key]["properties"], woChildren)]);
           }
           if (Object.entries(wChildren).length) {
-            constData[key]["properties"] = json2form.DataUtils.uiSchema2PropObj(data[key]["properties"], wChildren);
+            constData[key]["properties"] = this.uiSchema2PropObj(data[key]["properties"], wChildren);
           }
         } else {
-          constData = json2form.DataUtils.deepCloneObject(data);
+          constData = this.deepCloneObject(data);
         }
       }
       return constData;
