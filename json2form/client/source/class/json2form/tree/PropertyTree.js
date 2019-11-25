@@ -41,6 +41,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
 
     this.__flatObj = {};
     this.__openItems = new Set();
+    this.__allItems = new Map();
 
     this.setDelegate({
       createItem: () => new json2form.tree.PropertyTreeItem(),
@@ -57,6 +58,10 @@ qx.Class.define("json2form.tree.PropertyTree", {
         c.bindProperty("minItems", "minItems", null, item, id);
         c.bindProperty("maxItems", "maxItems", null, item, id);
         c.bindProperty("default", "default", null, item, id);
+        this.__allItems.set(item.getKey(), item);
+        if (item.hasFormEntry() && item.getFormEntry().key === item.getKey()) {
+          return;
+        }
         item.buildFormEntry();
         if (item.getKey() in this.__flatObj) {
           item.setValue(this.__flatObj[item.getKey()]);
@@ -99,6 +104,7 @@ qx.Class.define("json2form.tree.PropertyTree", {
   members: {
     __flatObj: null,
     __openItems: null,
+    __allItems: null,
 
     __applySchema: function(value, old) {
       // if new is same as old, skip
@@ -122,9 +128,8 @@ qx.Class.define("json2form.tree.PropertyTree", {
 
       const flatObj = this.__flatObj = json2form.DataUtils.formData2FlatObj(value);
       for (const key in flatObj) {
-        const leaf = this.getLeaf(key);
-        if (leaf) {
-          leaf.setValue(flatObj[key]);
+        if (this.__allItems.has(key)) {
+          this.__allItems.get(key).setValue(flatObj[key]);
         }
       }
     },
