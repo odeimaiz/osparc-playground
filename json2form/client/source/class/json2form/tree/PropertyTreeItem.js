@@ -127,6 +127,19 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       init: null,
       nullable: true,
       event: "changeFormEntry"
+    },
+
+    unit: {
+      init: null,
+      nullable: true,
+      apply: "__applyUnit",
+      event: "changeUnit"
+    },
+
+    formUnitEntry: {
+      init: null,
+      nullable: true,
+      event: "changeFormUnitEntry"
     }
   },
 
@@ -142,7 +155,7 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       checkbox: "CheckBox",
       array: "Array",
       colorpicker: "ColorPicker",
-      // quantity: "Quantity",
+      quantity: "Quantity",
       quantity3: "Quantity3",
       data: "FileButton"
     }
@@ -177,21 +190,38 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       return hasFormEntry;
     },
 
+    hasFormUnitEntry: function() {
+      const hasFormUnitEntry = Boolean(this.getFormUnitEntry && this.getFormUnitEntry());
+      return hasFormUnitEntry;
+    },
+
     buildFormEntry: function() {
       if (this.hasFormEntry()) {
-        formEntry = this.getFormEntry();
+        const formEntry = this.getFormEntry();
         if (this.getKey() === formEntry.key) {
           return;
         }
         this._remove(formEntry);
         this.resetFormEntry();
         this.resetValue();
+        if (this.hasFormUnitEntry()) {
+          const formUnitEntry = this.getFormUnitEntry();
+          this._remove(formUnitEntry);
+          this.resetFormUnitEntry();
+          this.resetUnit();
+        }
       }
+
       if (this.getType() !== "object") {
         const control = this.__getField();
         if (control) {
           this.setFormEntry(control);
           this.addWidget(this.getFormEntry());
+        }
+        const unitControl = this.__getUnitField();
+        if (unitControl) {
+          this.setFormUnitEntry(unitControl);
+          this.addWidget(this.getFormUnitEntry());
         }
       }
     },
@@ -202,6 +232,15 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       }
       if (this.hasFormEntry()) {
         this.getFormEntry().setValue(value);
+      }
+    },
+
+    __applyUnit: function(value, old) {
+      if (value === null) {
+        return;
+      }
+      if (this.hasFormUnitEntry()) {
+        this.getFormUnitEntry().setValue(value);
       }
     },
 
@@ -347,6 +386,18 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
       if (items.getMaximum) {
         s.set.maximum = items.getMaximum();
       }
-    }
+    },
+
+    __getUnitField: function() {
+      // if (this.isPropertyInitialized("unit") && this.getUnit()) {
+      if (this.getKey().endsWith(".value")) {
+        const unitField = new qx.ui.basic.Label();
+        unitField.set({
+          value: this.getUnit()
+        });
+        return unitField;
+      }
+      return null;
+    },
   }
 });

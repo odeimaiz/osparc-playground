@@ -95,17 +95,24 @@ qx.Class.define("json2form.DataUtils", {
       let constData = {};
       for (const key in data) {
         if (key === "properties" && typeof data["properties"] === 'object') {
-          constData["properties"] = [];
-          for (const propKey in data["properties"]) {
-            const propObj = data["properties"][propKey];
-            let prop = {};
-            const parentKey = data["key"];
-            const newKey = this.concatKey(propKey, parentKey);
-            propObj["key"] = prop["key"] = newKey;
-            prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
-            const moreProps = this.jsonSchema2PropArray(propObj);
-            prop = Object.assign(prop, moreProps);
-            constData["properties"].push(prop);
+          if (this.__areChildrenValueUnitPair(data)) {
+            data = Object.assign(data, data["properties"]["value"]);
+            constData = Object.assign(constData, data["properties"]["value"]);
+            data["key"] = constData["key"] = data["key"] + ".value";
+            data["unit"] = constData["unit"] = data["properties"]["unit"]["default"];
+          } else {
+            constData["properties"] = [];
+            for (const propKey in data["properties"]) {
+              const propObj = data["properties"][propKey];
+              let prop = {};
+              const parentKey = data["key"];
+              const newKey = this.concatKey(propKey, parentKey);
+              propObj["key"] = prop["key"] = newKey;
+              prop["title"] = ("title" in propObj) ? propObj["title"] : propKey;
+              const moreProps = this.jsonSchema2PropArray(propObj);
+              prop = Object.assign(prop, moreProps);
+              constData["properties"].push(prop);
+            }
           }
         } else {
           constData[key] = this.deepCloneObject(data[key]);
@@ -115,6 +122,15 @@ qx.Class.define("json2form.DataUtils", {
         constData["value"] = null;
       }
       return constData;
+    },
+
+    __areChildrenValueUnitPair: function(parent) {
+      if (Object.keys(parent["properties"]).length === 2 &&
+        "value" in parent["properties"] &&
+        "unit" in parent["properties"]) {
+        return true;
+      }
+      return false;
     },
 
     concatKey: function(key, parentKey) {

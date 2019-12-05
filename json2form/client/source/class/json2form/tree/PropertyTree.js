@@ -63,8 +63,15 @@ qx.Class.define("json2form.tree.PropertyTree", {
         item.buildFormEntry();
         if (item.getKey() in this.__flatObj) {
           item.setValue(this.__flatObj[item.getKey()]);
+          if (item.getKey().endsWith(".value")) {
+            const unitKey = item.getKey().replace(".value", ".unit");
+            if (unitKey in this.__flatObj) {
+              item.setUnit(this.__flatObj[unitKey]);
+            }
+          }
         } else {
           c.bindProperty("value", "value", null, item, id);
+          c.bindProperty("unit", "unit", null, item, id);
         }
 
         if (item.hasFormEntry()) {
@@ -132,8 +139,15 @@ qx.Class.define("json2form.tree.PropertyTree", {
 
       const flatObj = this.__flatObj = json2form.DataUtils.formData2FlatObj(value);
       for (const key in flatObj) {
-        if (this.__allItems.has(key)) {
-          this.__allItems.get(key).setValue(flatObj[key]);
+        if (key.endsWith(".unit")) {
+          const fieldKey = key.replace(".unit", ".value");
+          if (this.__allItems.has(fieldKey)) {
+            this.__allItems.get(fieldKey).setUnit(flatObj[key]);
+          }
+        } else {
+          if (this.__allItems.has(key)) {
+            this.__allItems.get(key).setValue(flatObj[key]);
+          }
         }
       }
     },
