@@ -244,10 +244,7 @@ qx.Class.define("json2form.FakeData", {
             "ui:widget": "colorpicker"
           },
           "Opacity": {
-            "value": {
-              "ui:widget": "range"
-            }
-            // "ui:widget": "range"
+            "ui:widget": "range"
           },
           "Transformation": {
             "Scaling": {
