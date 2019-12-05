@@ -59,7 +59,7 @@ qx.Class.define("json2form.form.ArraySpinner", {
     minimum: {
       check : "Number",
       apply : "_applyMinimum",
-      init : 0,
+      init : Number.MIN_SAFE_INTEGER,
       event: "changeMinimum"
     },
 
@@ -68,7 +68,7 @@ qx.Class.define("json2form.form.ArraySpinner", {
       check : "this._checkValue(value)",
       nullable : true,
       apply : "_applyValue",
-      init : 0,
+      init : Number.MAX_SAFE_INTEGER,
       event : "changeValue"
     },
 
