@@ -37,11 +37,9 @@ qx.Class.define("json2form.tree.PropertyTree", {
 
     this.set({
       hideRoot: true
-    })
+    });
 
-    this.__flatObj = {};
-    this.__openItems = new Set();
-    this.__allItems = new Map();
+    this.resetTree();
 
     this.setDelegate({
       createItem: () => new json2form.tree.PropertyTreeItem(),
@@ -105,6 +103,12 @@ qx.Class.define("json2form.tree.PropertyTree", {
     __flatObj: null,
     __openItems: null,
     __allItems: null,
+
+    resetTree: function() {
+      this.__flatObj = {};
+      this.__openItems = new Set();
+      this.__allItems = new Map();
+    },
 
     __applySchema: function(value, old) {
       // if new is same as old, skip
