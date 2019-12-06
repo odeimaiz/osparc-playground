@@ -389,11 +389,12 @@ qx.Class.define("json2form.tree.PropertyTreeItem", {
     },
 
     __getUnitField: function() {
-      // if (this.isPropertyInitialized("unit") && this.getUnit()) {
       if (this.getKey().endsWith(".value")) {
         const unitField = new qx.ui.basic.Label();
         unitField.set({
-          value: this.getUnit()
+          value: this.getUnit(),
+          minWidth: 30,
+          maxWidth: 30
         });
         return unitField;
       }
