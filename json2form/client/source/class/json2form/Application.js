@@ -88,7 +88,7 @@ qx.Class.define("json2form.Application", {
     },
 
     __buildJsons: function() {
-      const showIntermediate = true;
+      const showIntermediate = false;
 
       const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
 
