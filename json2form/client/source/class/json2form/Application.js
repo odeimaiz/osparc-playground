@@ -88,6 +88,8 @@ qx.Class.define("json2form.Application", {
     },
 
     __buildJsons: function() {
+      const showIntermediate = true;
+
       const jsonsLayout = new qx.ui.container.Composite(new qx.ui.layout.VBox(20));
 
 
@@ -122,25 +124,31 @@ qx.Class.define("json2form.Application", {
       vBoxMod.add(uiSchemaModLayout, {
         flex: 1
       });
-      jsonSchemasLayout.add(vBoxMod, {
-        flex: 1
-      });
+      if (showIntermediate) {
+        jsonSchemasLayout.add(vBoxMod, {
+          flex: 1
+        });
+      }
 
 
       const mergedSchemaMod = this.__buildJsonLayout("SchemasMerged");
       this.__mergedSchemaMod = mergedSchemaMod.getChildren()[1];
       this.__mergedSchemaMod.setReadOnly(true);
-      jsonSchemasLayout.add(mergedSchemaMod, {
-        flex: 1
-      });
+      if (showIntermediate) {
+        jsonSchemasLayout.add(mergedSchemaMod, {
+          flex: 1
+        });
+      }
 
 
       const mergedForTree = this.__buildJsonLayout("SchemasForTreeBinding");
       this.__mergedForTree = mergedForTree.getChildren()[1];
       this.__mergedForTree.setReadOnly(true);
-      jsonSchemasLayout.add(mergedForTree, {
-        flex: 1
-      });
+      if (showIntermediate) {
+        jsonSchemasLayout.add(mergedForTree, {
+          flex: 1
+        });
+      }
 
 
       const formDataSrcLayout = this.__buildJsonLayout("formDataSrc");
